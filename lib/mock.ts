@@ -213,3 +213,19 @@ export function formatTechName(tag: string): string {
     .replace(/[-_]/g, ' ')
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
+
+// Strip markdown (## headers, *, `, >, _, -) and return a short snippet
+// for previews. Takes the first `lines` non-empty lines joined as prose.
+export function descriptionSnippet(
+  description: string | null | undefined,
+  lines: number = 2
+): string {
+  if (!description) return '';
+  return description
+    .replace(/^#+[^\n]*\n+/gm, '') // strip all ## headers
+    .split('\n')
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .slice(0, lines)
+    .join(' ');
+}

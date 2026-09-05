@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { IGHeartOutline, IGComment, IGPaperPlane, IGSaveOutline, IGMore } from '@/components/ui/IgIcons';
 import { CoverArt } from '@/components/feed/CoverArt';
 import { useToast } from '@/components/ui/Toast';
-import { formatTechName } from '@/lib/mock';
+import { formatTechName, descriptionSnippet } from '@/lib/mock';
 import type { ProjectWithCount } from '@/lib/types';
 
 interface ProjectCardProps {
@@ -221,12 +221,12 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
         </div>
       </button>
 
-      <div className="flex items-center justify-between px-4 sm:px-5 pt-3 pb-1">
-        <div className="flex items-center gap-4 text-text">
+      <div className="flex items-center justify-between px-3 sm:px-4 pt-3 pb-1">
+        <div className="flex items-center -ml-2 text-text">
           <button
             type="button"
             onClick={() => void toggleLike()}
-            className="p-0 hover:opacity-60 transition-opacity"
+            className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] p-2.5 hover:opacity-60 active:scale-95 transition-transform"
             aria-label={liked ? 'Unlike' : 'Like'}
             aria-pressed={liked}
           >
@@ -237,7 +237,7 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
           </button>
           <a
             href={`/p/${project.slug}#comments`}
-            className="hover:opacity-60 transition-opacity"
+            className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] p-2.5 hover:opacity-60 active:scale-95 transition-transform"
             aria-label="Comments"
           >
             <IGComment className="h-[22px] w-[22px] text-text" />
@@ -245,7 +245,7 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
           <button
             type="button"
             onClick={() => void shareProject()}
-            className="hover:opacity-60 transition-opacity"
+            className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] p-2.5 hover:opacity-60 active:scale-95 transition-transform"
             aria-label="Share"
           >
             <IGPaperPlane className="h-[22px] w-[22px] text-text" />
@@ -254,7 +254,7 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
         <button
           type="button"
           onClick={toggleSaved}
-          className="hover:opacity-60 transition-opacity"
+          className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] p-2.5 -mr-2 hover:opacity-60 active:scale-95 transition-transform"
           aria-label={saved ? 'Unsave' : 'Save'}
           aria-pressed={saved}
         >
@@ -277,12 +277,7 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
             lenn0109
           </Link>
           <span className="text-text-2">
-            {project.description
-              .replace(/^#+\s*[^\n]*\n+/, '')
-              .split('\n')
-              .filter(Boolean)
-              .slice(0, 2)
-              .join(' ')}
+            {descriptionSnippet(project.description, 2)}
           </span>
         </p>
       </div>
@@ -294,9 +289,9 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
               type="button"
               key={t}
               onClick={() => filterByTag(t)}
-              className="inline-flex items-center px-2 h-[22px] rounded-pill text-[12px] tracking-tight text-accent font-medium hover:bg-accent/10 transition-colors"
+              className="inline-flex items-center px-2.5 h-[22px] rounded-pill text-[12px] tracking-tight text-text-2 bg-bg-muted font-medium hover:bg-bg-hover transition-colors"
             >
-              #{formatTechName(t)}
+              {formatTechName(t)}
             </button>
           ))}
         </div>

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { descriptionSnippet } from '@/lib/mock';
 import type { ProjectWithCount } from '@/lib/types';
 
 interface SuggestionsProps {
@@ -57,10 +58,7 @@ export function Suggestions({ projects }: SuggestionsProps) {
                     {project.title}
                   </p>
                   <p className="text-[12px] text-text-muted tracking-tight truncate">
-                    {project.description
-                      .replace(/^#+\s*[^\n]*\n+/, '')
-                      .split('\n')[0]
-                      .slice(0, 40)}
+                    {descriptionSnippet(project.description, 1).slice(0, 40)}
                   </p>
                 </Link>
               </li>

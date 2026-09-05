@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTransition } from 'react';
+import { formatTechName } from '@/lib/mock';
 
 interface FilterPillsProps {
   tags: string[];
@@ -31,14 +32,19 @@ export function FilterPills({ tags, active }: FilterPillsProps) {
 
   const items: Array<{ label: string; value: string | null }> = [
     { label: 'All', value: null },
-    ...tags.map((t) => ({ label: t, value: t })),
+    ...tags.map((t) => ({ label: formatTechName(t), value: t })),
   ];
 
   return (
     <nav
       aria-label="Filter by tech"
-      className="bg-bg border-b border-border sticky top-11 z-30"
+      className="bg-bg border-b border-border sticky top-11 z-30 relative"
     >
+      {/* Right-edge scroll affordance for mobile — fades into content */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-bg to-transparent sm:hidden"
+      />
       <ul
         className="flex items-center gap-1.5 overflow-x-auto px-4 sm:px-6 py-2.5 no-scrollbar"
         style={{ opacity: isPending ? 0.6 : 1, transition: 'opacity 100ms' }}

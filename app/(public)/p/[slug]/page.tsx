@@ -7,8 +7,9 @@ import { ProjectActions } from '@/components/project/ProjectActions';
 import { ViewTracker } from '@/components/project/ViewTracker';
 import { RelatedProjects } from '@/components/project/RelatedProjects';
 import { Comments } from '@/components/project/Comments';
+import { CoverArt } from '@/components/feed/CoverArt';
 import { getProjectBySlug, getFeed } from '@/lib/queries';
-import { MOCK_COMMENTS, formatTechName } from '@/lib/mock';
+import { MOCK_COMMENTS, formatTechName, descriptionSnippet } from '@/lib/mock';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -21,7 +22,7 @@ export async function generateMetadata({
   const { project } = await getProjectBySlug(slug);
   if (!project) return { title: 'Not found' };
 
-  const description = project.description.replace(/[#*`>_\-]+/g, '').slice(0, 160);
+  const description = descriptionSnippet(project.description, 3).slice(0, 160);
   return {
     title: project.title,
     description,
@@ -68,7 +69,7 @@ export default async function ProjectPage({ params }: PageProps) {
             className="inline-flex items-center gap-1 text-[13px] tracking-tight text-accent hover:underline"
           >
             <ChevronLeft className="h-4 w-4" strokeWidth={2} />
-            Back to feed
+            Back to projects
           </Link>
           <Link
             href="/#contact"
@@ -93,9 +94,7 @@ export default async function ProjectPage({ params }: PageProps) {
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center text-text-subtle text-xs font-mono uppercase tracking-widest">
-                    {project.title}
-                  </div>
+                  <CoverArt project={project} />
                 )}
                 {project.featured && (
                   <span className="absolute top-3 left-3 inline-flex items-center gap-1 h-6 px-2.5 rounded-pill bg-bg/90 backdrop-blur text-[11px] font-semibold tracking-tight text-text">
@@ -109,9 +108,9 @@ export default async function ProjectPage({ params }: PageProps) {
                   <Link
                     key={tag}
                     href={`/?tech=${encodeURIComponent(tag)}`}
-                    className="inline-flex items-center px-2.5 h-[26px] rounded-pill text-[12px] tracking-tight text-accent font-medium hover:bg-accent/10 transition-colors"
+                    className="inline-flex items-center px-2.5 h-[26px] rounded-pill text-[12px] tracking-tight text-text-2 bg-bg-muted font-medium hover:bg-bg-hover transition-colors"
                   >
-                    #{formatTechName(tag)}
+                    {formatTechName(tag)}
                   </Link>
                 ))}
               </div>

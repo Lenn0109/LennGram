@@ -12,7 +12,7 @@ export function BottomNav() {
   };
 
   const items = [
-    { href: '/', label: 'Feed', icon: IGHomeOutline, filled: true },
+    { href: '/', label: 'Projects', icon: IGHomeOutline, filled: true },
     { href: '/?filter=liked', label: 'Liked', icon: IGHeartOutline, filled: false },
     { href: '/?filter=saved', label: 'Saved', icon: IGSaveOutline, filled: false },
     { href: '/admin', label: 'You', icon: IGProfileIcon, filled: true },
@@ -20,7 +20,7 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-40 bg-bg/90 backdrop-blur-xl border-t border-border sm:hidden"
+      className="fixed bottom-0 left-0 right-0 z-40 bg-bg/90 backdrop-blur-xl border-t border-border sm:hidden pb-[env(safe-area-inset-bottom)]"
       aria-label="Primary"
     >
       <ul className="flex items-stretch justify-around h-[52px]">
@@ -33,7 +33,7 @@ export function BottomNav() {
                 href={item.href}
                 aria-label={item.label}
                 aria-current={active ? 'page' : undefined}
-                className="flex flex-col items-center justify-center h-full gap-0.5 focus-visible:outline-none"
+                className="flex flex-col items-center justify-center h-full gap-0.5 focus-visible:outline-none focus-visible:bg-bg-muted transition-colors"
               >
                 <Icon
                   filled={item.filled && active}

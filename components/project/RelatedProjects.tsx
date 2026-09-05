@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
+import { descriptionSnippet } from '@/lib/mock';
 import type { ProjectWithCount } from '@/lib/types';
 
 interface RelatedProjectsProps {
@@ -63,10 +64,7 @@ export function RelatedProjects({ projects }: RelatedProjectsProps) {
                   {p.title}
                 </p>
                 <p className="text-[13px] text-text-muted tracking-tight line-clamp-2">
-                  {p.description
-                    .replace(/^#+\s*[^\n]*\n+/, '')
-                    .split('\n')[0]
-                    .slice(0, 80)}
+                  {descriptionSnippet(p.description, 1).slice(0, 80)}
                 </p>
               </Link>
             </li>
