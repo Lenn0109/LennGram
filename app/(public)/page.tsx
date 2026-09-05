@@ -1,5 +1,5 @@
 import { ProjectCard } from '@/components/feed/ProjectCard';
-import { FilterChips } from '@/components/feed/FilterChips';
+import { StoryStrip } from '@/components/feed/StoryStrip';
 import { getFeed } from '@/lib/queries';
 
 interface PageProps {
@@ -10,34 +10,19 @@ export default async function HomePage({ searchParams }: PageProps) {
   const params = await searchParams;
   const tech = typeof params.tech === 'string' ? params.tech : null;
 
-  const { items, tags } = await getFeed({ tech });
+  const { items } = await getFeed({ tech });
 
   return (
-    <main className="mx-auto max-w-3xl px-6 sm:px-8 pt-12 sm:pt-20 pb-16">
-      <header className="mb-12 sm:mb-16">
-        <h1 className="text-4xl sm:text-5xl font-semibold tracking-tighter leading-[1.05] mb-4">
-          Projects
-        </h1>
-        <p className="text-text-muted text-base sm:text-lg max-w-xl leading-relaxed">
-          Handmade work, monochrome by intent. Independent projects,
-          experiments, and a few that shipped.
-        </p>
-      </header>
-
-      {tags.length > 0 && (
-        <div className="mb-2 sm:mb-4">
-          <FilterChips tags={tags} active={tech} />
-        </div>
-      )}
-
+    <main className="mx-auto max-w-[470px] sm:max-w-2xl">
+      {items.length > 0 && <StoryStrip projects={items} />}
       <section>
         {items.length === 0 ? (
           <p className="text-text-muted py-16 text-center text-sm">
             No published projects yet.
           </p>
         ) : (
-          items.map((project) => (
-            <ProjectCard key={project.id} project={project} />
+          items.map((project, i) => (
+            <ProjectCard key={project.id} project={project} index={i} />
           ))
         )}
       </section>
