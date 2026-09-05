@@ -1,17 +1,7 @@
 export default function Loading() {
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-      <div className="columns-1 sm:columns-2 lg:columns-3 gap-4">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="break-inside-avoid mb-4 border border-border">
-            <div className="aspect-square bg-bg-muted animate-pulse" />
-            <div className="px-4 py-4 space-y-2">
-              <div className="h-4 w-2/3 bg-bg-muted animate-pulse" />
-              <div className="h-3 w-1/3 bg-bg-muted animate-pulse" />
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+    <main className="mx-auto max-w-3xl px-6 sm:px-8 pt-12 sm:pt-20">
+      <p className="text-text-muted text-sm">Loading…</p>
+    </main>
   );
 }

@@ -1,6 +1,5 @@
 import { TopNav } from '@/components/feed/TopNav';
 import { Footer } from '@/components/feed/Footer';
-import { BottomNav } from '@/components/feed/BottomNav';
 
 export default function PublicLayout({
   children,
@@ -10,9 +9,8 @@ export default function PublicLayout({
   return (
     <div className="min-h-screen flex flex-col bg-bg">
       <TopNav />
-      <div className="flex-1 pb-14 sm:pb-0">{children}</div>
+      <div className="flex-1">{children}</div>
       <Footer />
-      <BottomNav />
     </div>
   );
 }
