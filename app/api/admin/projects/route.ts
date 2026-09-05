@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
 export async function POST(req: Request) {
   const cookieStore = await cookies();
   const adminCookie = cookieStore.get(ADMIN_COOKIE)?.value;
-  if (!verifyAdminCookie(adminCookie)) {
+  if (!(await verifyAdminCookie(adminCookie))) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
 

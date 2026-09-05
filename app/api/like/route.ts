@@ -28,7 +28,7 @@ export async function POST(req: Request) {
   }
 
   const ip = getRequestIp(req);
-  const ipHash = hashIp(ip);
+  const ipHash = await hashIp(ip);
 
   if (!isSupabaseConfigured()) {
     // Dev mode without Supabase: return success so UI flow works.

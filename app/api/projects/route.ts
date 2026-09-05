@@ -12,7 +12,7 @@ export async function GET(req: Request) {
 
   const cookieStore = await cookies();
   const adminCookie = cookieStore.get(ADMIN_COOKIE)?.value;
-  const isAdmin = verifyAdminCookie(adminCookie);
+  const isAdmin = await verifyAdminCookie(adminCookie);
 
   if (isAdmin && url.searchParams.get('admin') === '1') {
     const items = await getAllProjectsForAdmin();

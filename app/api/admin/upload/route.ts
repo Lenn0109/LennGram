@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     .find((s) => s.startsWith(`${ADMIN_COOKIE}=`))
     ?.slice(ADMIN_COOKIE.length + 1);
 
-  if (!verifyAdminCookie(adminCookie)) {
+  if (!(await verifyAdminCookie(adminCookie))) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
 

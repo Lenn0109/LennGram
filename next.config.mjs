@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  typedRoutes: false,
   images: {
     remotePatterns: [
       {
@@ -8,9 +9,6 @@ const nextConfig = {
         hostname: '**.supabase.co',
       },
     ],
-  },
-  experimental: {
-    typedRoutes: false,
   },
 };
 

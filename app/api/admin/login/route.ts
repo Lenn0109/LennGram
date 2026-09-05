@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'invalid_password' }, { status: 401 });
   }
 
-  const value = signAdminCookie();
+  const value = await signAdminCookie();
   const res = NextResponse.json({ ok: true });
   res.cookies.set(ADMIN_COOKIE, value, COOKIE_OPTIONS);
   return res;

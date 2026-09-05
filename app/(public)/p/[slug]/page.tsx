@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { ExternalLink, Github } from 'lucide-react';
 import type { Metadata } from 'next';
 import { Markdown } from '@/components/project/Markdown';
@@ -136,9 +137,9 @@ export default async function ProjectPage({ params }: PageProps) {
                 </h2>
                 <p className="text-sm text-text-muted">
                   Browse the feed to see all{' '}
-                  <a href="/" className="text-text underline">
+                  <Link href="/" className="text-text underline">
                     projects
-                  </a>
+                  </Link>
                   .
                 </p>
               </section>

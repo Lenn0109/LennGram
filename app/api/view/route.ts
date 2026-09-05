@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'DB unavailable' }, { status: 503 });
   }
 
-  const ipHash = hashIp(getRequestIp(req));
+  const ipHash = await hashIp(getRequestIp(req));
   const { error } = await client
     .from('project_views')
     .insert({ project_id: projectId, ip_hash: ipHash });

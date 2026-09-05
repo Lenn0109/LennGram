@@ -14,7 +14,7 @@ interface Ctx {
 export async function PATCH(req: Request, ctx: Ctx) {
   const cookieStore = await cookies();
   const adminCookie = cookieStore.get(ADMIN_COOKIE)?.value;
-  if (!verifyAdminCookie(adminCookie)) {
+  if (!(await verifyAdminCookie(adminCookie))) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
 
@@ -89,7 +89,7 @@ export async function PATCH(req: Request, ctx: Ctx) {
 export async function DELETE(_req: Request, ctx: Ctx) {
   const cookieStore = await cookies();
   const adminCookie = cookieStore.get(ADMIN_COOKIE)?.value;
-  if (!verifyAdminCookie(adminCookie)) {
+  if (!(await verifyAdminCookie(adminCookie))) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
 
