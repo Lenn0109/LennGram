@@ -132,7 +132,7 @@ landing page. Visitors scroll instead of read.
 | **Vercel Hobby** | Free, integrates with GitHub push, edge CDN, 100GB bandwidth |
 | **No ORM** | Supabase JS client + RLS = no schema duplication |
 | **No Sentry/PostHog** | Out of scope per PRD; Vercel handles runtime errors |
-| **shadcn primitives** (manual) | Handmade copy of source, not AI-generated UI |
+| **shadcn primitives** (manual) | Handmade copy of source, written by humans |
 | **JetBrains Mono** (font) | For tech tags; matches "indie dev" aesthetic |
 
 ## 7. Risks

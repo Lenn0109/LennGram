@@ -60,7 +60,7 @@
 - [ ] No `@next/bundle-analyzer` in default build
 - [ ] No `@sentry/nextjs` (DSN present but not configured)
 - [ ] No ORM (Supabase JS client only)
-- [ ] No AI UI generators (21st.dev, v0, Galileo, Uizard)
+- [ ] No automated UI tools (template generators, low-effort design tools)
 - [ ] No accent color in components (gray only)
 - [ ] No emoji in copy
 - [ ] No shadow on cards (border + hover bg only)

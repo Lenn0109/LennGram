@@ -1,7 +1,7 @@
 # LennGram
 
 > **Project showcase by [lenn0109](https://github.com/Lenn0109).**
-> Handmade, monochrome, no AI slop.
+> Handmade, monochrome.
 
 LennGram is a personal project portfolio styled like a social media feed.
 Visitors browse projects in a masonry grid; the owner (lenn0109) curates

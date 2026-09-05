@@ -1,7 +1,6 @@
 # LennGram — Design System
 
-> Monochrome light theme. No accent color, no shadow, no gradient.
-> Handmade, no AI slop.
+> Monochrome light theme. Handmade, restrained, intentional.
 
 ## 1. Visual theme
 

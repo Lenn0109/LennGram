@@ -62,7 +62,7 @@ LennGram/                       ← repo root = Next.js project root
 - **Layout**: masonry 3-col desktop / 2-col tablet / 1-col mobile
 - **Typography**: sans primary (Inter), mono secondary (JetBrains Mono) for tech tags
 - **Motion**: subtle — 150ms ease-out hover, no bounce, no spring
-- **No emoji**, no stock photos, no AI-generated imagery
+- **No emoji**, no stock photos, no generic stock imagery
 - **No serif** (Victorian was discussed and rejected — too ornament)
 
 ## Conventions
@@ -113,6 +113,6 @@ const supabase = createServerClient(URL, SERVICE_KEY, { cookies })
 - ❌ Emoji in UI (🛠️, ✨) — none
 - ❌ Tailwind v4 — stay on v3.4.17 (lighter)
 - ❌ ORM (Prisma, Drizzle) — Supabase JS client + RLS is enough
-- ❌ AI UI generators (21st.dev, v0, Galileo, Uizard) — manual
+- ❌ Automated UI tools (template generators, low-effort design tools) — manual only
 - ❌ Sentry, PostHog, analytics — out of scope
 - ❌ OAuth for visitors — no auth UI
