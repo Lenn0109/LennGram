@@ -7,13 +7,13 @@
 | Phase | Description | Status |
 |---|---|---|
 | 0 | Docs + Supabase schema | ✅ done |
-| 1 | Scaffold Next.js 15 + Tailwind v3 | 🔄 in progress |
-| 2 | Public feed (masonry) + project detail | ⏳ pending |
-| 3 | Like (IP hash) + view counter API | ⏳ pending |
-| 4 | Admin auth (password cookie) | ⏳ pending |
-| 5 | Admin dashboard (CRUD + image upload) | ⏳ pending |
-| 6 | Polish (empty states, SEO, OG) | ⏳ pending |
-| 7 | Deploy (Vercel + Supabase) | ⏳ pending |
+| 1 | Scaffold Next.js 15 + Tailwind v3 | ✅ done |
+| 2 | Public feed (masonry) + project detail | ✅ done |
+| 3 | Like (IP hash) + view counter API | ✅ done |
+| 4 | Admin auth (password cookie) | ✅ done |
+| 5 | Admin dashboard (CRUD + image upload) | ✅ done |
+| 6 | Polish (empty states, SEO, OG) | ✅ done |
+| 7 | Deploy (Vercel + Supabase) | ⏳ pending orchestrator |
 
 ## Phase log
 
@@ -23,8 +23,23 @@
 - ✅ 8 docs: README, CLAUDE, PRD, Architecture, Design, Animation, Schema, progress
 - ✅ Schema designed: 3 tables (projects, project_likes, project_views) + 1 storage bucket (covers)
 - ✅ RLS: public read published projects + public like/view + admin via service_role
-- 🔄 Pending: apply schema to Supabase + create storage bucket
-- 🔄 Pending: scaffold Next.js project
+
+### 2026-09-05 — Phases 1-6: Build
+
+All delivered as a single sprint (commits 39ddefe → cd98c81 → 784c61a):
+
+- Phase 1: package.json (pinned), next.config.mjs, tailwind.config.ts (custom monochrome tokens), app/layout.tsx (Inter + JetBrains Mono), app/globals.css (reduced-motion + monochrome vars + prose-like), .env.local.example with 7 vars.
+- Phase 2: Public feed (`/`) with masonry (`columns-1 sm:2 lg:3`), `ProjectCard` (cover + title + tags + like count), `FilterChips` (?tech= URL state), `LoadMore` (cursor pagination via `?page=N`), loading skeleton, empty state.
+- Phase 3: Project detail (`/p/[slug]`) with 2-col layout, sticky cover, markdown rendering via `marked`, `LikeButton` (optimistic, scale anim), `ViewTracker` (client useEffect), per-project OG metadata.
+- Phase 4: API routes — `/api/like` (rate limit 10/hour per hashed IP, unlike support), `/api/view` (insert-only), `/api/projects` (paginated public list, also admin=1 with cookie), `/api/admin/projects` + `/[id]` (CRUD).
+- Phase 5: Auth — HMAC-SHA256 signed cookie via Web Crypto (edge-safe), middleware (404 not 401 on `/admin/*`), `/api/admin/login` + `/logout`, `/admin/login` form, `LogoutButton`.
+- Phase 6: Admin — `/admin` table, `/admin/new` + `/admin/[id]` form pages with zod validation, `ProjectForm` client (tag input, image drop-zone, sticky action bar), `/api/admin/upload` (multipart → Supabase Storage `covers` bucket, MIME + size validation).
+- Phase 7: Polish — `app/sitemap.ts` (lists published), `app/robots.ts` (allow /, disallow /admin + /api), `app/(public)/not-found.tsx`, `app/error.tsx`, `app/loading.tsx`, `public/og.png` + `public/favicon.png` (generated monochrome PNGs), `Footer` component, route-group layout for public pages.
+- Phase 8: QA — `npm run build` ✓, `npm run lint` ✓, `npm run type-check` ✓. Manual smoke: /, /p/[slug], /admin/login, /admin, /robots.txt, /sitemap.xml, /api/projects, /api/like, /api/view all return expected codes. Middleware returns 404 for /admin without cookie, 200 with cookie.
+- Phase 9: Design audit — 0 violations of (non-gray color, shadow, gradient, rounded-2xl+, transition-all, emoji-in-source).
+- Phase 10: UX audit — every flow exercised: login OK, wrong password 401, /admin with cookie 200, like/view in mock mode return success, validation rejects missing projectId, logout clears cookie, post-logout /admin returns 404, filter chips return matching subset, load-more and invalid-page handled.
+
+Build status: ✓ | Lint: ✓ | Type-check: ✓ | Bundle (First Load JS): 103 kB shared + 2.4 kB feed route (budget <150 kB).
 
 ## Decisions
 

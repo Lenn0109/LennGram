@@ -36,26 +36,34 @@ npm install
 # Copy env template, fill in values (see "Environment" below)
 cp .env.local.example .env.local
 
-# Push DB schema to Supabase
-psql "$DATABASE_URL" -f supabase/schema.sql
-
-# Create Supabase Storage bucket "covers" (public read)
-
-# Run dev server
+# Run dev server (works without Supabase — see "Dev without Supabase" below)
 npm run dev
 # Open http://localhost:3000
 ```
+
+## Dev without Supabase
+
+If you skip filling in Supabase env vars, the app falls back to a small
+mock dataset (5 projects) so you can still click through the public UI
+locally. Likes/views/admin writes return success stubs but do not
+persist anywhere. Fill in the env vars for real data.
 
 ## Environment
 
 | Var | Required | Description |
 |---|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | yes | Supabase project URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | yes | Supabase anon (public) key |
-| `SUPABASE_SERVICE_ROLE_KEY` | yes (server only) | Supabase service role key — bypasses RLS, used by `/admin` |
-| `ADMIN_PASSWORD` | yes | Shared password to access `/admin` |
-| `LIKES_SALT` | yes | Random 32+ char string — mixed with IP before hashing |
-| `NEXT_PUBLIC_SITE_URL` | yes | Public URL (e.g. `https://lenngram.vercel.app`) |
+| `NEXT_PUBLIC_SUPABASE_URL` | for real data | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | for real data | Supabase anon (public) key |
+| `SUPABASE_SERVICE_ROLE_KEY` | server only | Supabase service role key — bypasses RLS, used by `/admin` |
+| `ADMIN_PASSWORD` | yes for admin | Shared password to access `/admin` |
+| `LIKES_SALT` | yes for likes/views | Random 32+ char string — mixed with IP before hashing |
+| `COOKIE_SECRET` | yes for admin | Random 32+ char string — HMAC secret for the admin session cookie |
+| `NEXT_PUBLIC_SITE_URL` | for SEO | Public URL (e.g. `https://lenngram.vercel.app`) |
+
+Generate the secrets with:
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
 
 Copy values from `.env.local.example` and fill in. Do not commit `.env.local`.
 
@@ -70,7 +78,7 @@ npm run start   # serve production build
 
 1. Push to GitHub (already done).
 2. Import `Lenn0109/LennGram` in [Vercel dashboard](https://vercel.com/new).
-3. Set all 6 env vars from the table above (Vercel → Settings → Environment Variables).
+3. Set all 7 env vars from the table above (Vercel → Settings → Environment Variables).
 4. Vercel auto-builds + deploys on every push to `main`.
 5. (Optional) Add custom domain in Vercel → Domains.
 
