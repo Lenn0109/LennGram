@@ -1,5 +1,6 @@
 import { ProjectCard } from '@/components/feed/ProjectCard';
 import { StoryStrip } from '@/components/feed/StoryStrip';
+import { Suggestions } from '@/components/feed/Suggestions';
 import { getFeed } from '@/lib/queries';
 
 interface PageProps {
@@ -26,6 +27,7 @@ export default async function HomePage({ searchParams }: PageProps) {
           ))
         )}
       </section>
+      {items.length > 3 && <Suggestions projects={items} />}
     </main>
   );
 }

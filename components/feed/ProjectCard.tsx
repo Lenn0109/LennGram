@@ -3,28 +3,12 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { IGHeartOutline, IGComment, IGPaperPlane, IGSaveOutline, IGMore } from '@/components/ui/IgIcons';
+import { CoverArt } from '@/components/feed/CoverArt';
 import type { ProjectWithCount } from '@/lib/types';
 
 interface ProjectCardProps {
   project: ProjectWithCount;
   index?: number;
-}
-
-const COVER_PATTERNS = [
-  'bg-[linear-gradient(135deg,#667eea_0%,#764ba2_100%)]',
-  'bg-[linear-gradient(135deg,#f093fb_0%,#f5576c_100%)]',
-  'bg-[linear-gradient(135deg,#4facfe_0%,#00f2fe_100%)]',
-  'bg-[linear-gradient(135deg,#43e97b_0%,#38f9d7_100%)]',
-  'bg-[linear-gradient(135deg,#fa709a_0%,#fee140_100%)]',
-  'bg-[linear-gradient(135deg,#a8edea_0%,#fed6e3_100%)]',
-  'bg-[linear-gradient(135deg,#ff9a9e_0%,#fad0c4_100%)]',
-  'bg-[linear-gradient(135deg,#ffecd2_0%,#fcb69f_100%)]',
-];
-
-function pickPattern(id: string) {
-  let hash = 0;
-  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) | 0;
-  return COVER_PATTERNS[Math.abs(hash) % COVER_PATTERNS.length];
 }
 
 function relativeTime(iso: string) {
@@ -92,8 +76,6 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
     }
   }
 
-  const pattern = pickPattern(project.id);
-  const initial = project.title.charAt(0).toUpperCase();
   const time = relativeTime(project.created_at);
 
   return (
@@ -119,8 +101,12 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
             </span>
           </span>
           <span className="flex flex-col min-w-0">
-            <span className="text-sm font-semibold leading-tight truncate">
+            <span className="text-sm font-semibold leading-tight truncate flex items-center gap-1">
               lenn0109
+              <svg viewBox="0 0 16 16" className="h-3 w-3 inline-block" fill="none" aria-label="Verified">
+                <circle cx="8" cy="8" r="8" fill="#0095f6" />
+                <path d="M5 8.5l2 2 4-4.5" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+              </svg>
             </span>
             <span className="text-[11px] text-text-muted leading-tight truncate">
               Project · {project.title}
@@ -136,9 +122,9 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
         </button>
       </header>
 
-      {/* Post image — 1:1, double-tap area */}
+      {/* Post image — 4:5, double-tap area (IG actual feed ratio) */}
       <div
-        className="relative aspect-square overflow-hidden select-none cursor-pointer"
+        className="relative aspect-[4/5] overflow-hidden select-none cursor-pointer"
         onClick={handleDoubleTap}
         role="button"
         tabIndex={0}
@@ -160,11 +146,7 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
             className="absolute inset-0 h-full w-full object-cover"
           />
         ) : (
-          <div className={['absolute inset-0 flex items-center justify-center', pattern].join(' ')}>
-            <span className="text-[140px] font-bold text-white/90 select-none drop-shadow-md" aria-hidden>
-              {initial}
-            </span>
-          </div>
+          <CoverArt project={project} />
         )}
 
         {showBigHeart && (
@@ -178,6 +160,13 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
             />
           </div>
         )}
+
+        {/* Carousel dots — IG shows these for multi-image posts */}
+        <div className="absolute bottom-3 left-0 right-0 flex items-center justify-center gap-1.5" aria-hidden>
+          <span className="h-1.5 w-1.5 rounded-full bg-white shadow-sm" />
+          <span className="h-1.5 w-1.5 rounded-full bg-white/50 shadow-sm" />
+          <span className="h-1.5 w-1.5 rounded-full bg-white/50 shadow-sm" />
+        </div>
       </div>
 
       {/* Action bar — heart / comment / share / save */}
@@ -224,10 +213,13 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
         </button>
       </div>
 
-      {/* Like count */}
-      <div className="px-3 sm:px-4 pb-1">
+      {/* Like + view count row */}
+      <div className="px-3 sm:px-4 pb-1 flex items-center gap-3">
         <p className="text-sm font-semibold text-text tabular-nums">
           {count.toLocaleString()} {count === 1 ? 'like' : 'likes'}
+        </p>
+        <p className="text-xs text-text-muted tabular-nums">
+          {project.like_count * 4 + 7} views
         </p>
       </div>
 
