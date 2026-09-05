@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { IGHeartOutline, IGComment, IGPaperPlane, IGSaveOutline, IGMore } from '@/components/ui/IgIcons';
 import { CoverArt } from '@/components/feed/CoverArt';
 import { useToast } from '@/components/ui/Toast';
+import { formatTechName } from '@/lib/mock';
 import type { ProjectWithCount } from '@/lib/types';
 
 interface ProjectCardProps {
@@ -191,18 +192,26 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
       <button
         type="button"
         onClick={handleClick}
-        className="block relative aspect-[4/5] w-full overflow-hidden bg-bg-muted focus-visible:outline-none"
+        className="block relative aspect-[4/5] w-full overflow-hidden bg-bg-muted focus-visible:outline-none group"
         aria-label={`${project.title} cover`}
       >
-        {project.cover_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={project.cover_url}
-            alt={project.title}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        ) : (
-          <CoverArt project={project} />
+        <div className="absolute inset-0 transition-transform duration-slow ease-apple group-hover:scale-[1.02]">
+          {project.cover_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={project.cover_url}
+              alt={project.title}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          ) : (
+            <CoverArt project={project} />
+          )}
+        </div>
+
+        {project.featured && (
+          <span className="absolute top-3 left-3 inline-flex items-center gap-1 h-6 px-2.5 rounded-pill bg-bg/90 backdrop-blur text-[11px] font-semibold tracking-tight text-text shadow-apple-soft">
+            ★ Featured
+          </span>
         )}
 
         <div className="absolute bottom-2.5 left-0 right-0 flex items-center justify-center gap-1" aria-hidden>
@@ -287,7 +296,7 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
               onClick={() => filterByTag(t)}
               className="inline-flex items-center px-2 h-[22px] rounded-pill text-[12px] tracking-tight text-accent font-medium hover:bg-accent/10 transition-colors"
             >
-              #{t}
+              #{formatTechName(t)}
             </button>
           ))}
         </div>

@@ -151,12 +151,16 @@ a:focus-visible {
   letter-spacing: -0.01em;
   font-weight: 400;
   border: none;
-  transition: background-color 100ms ease-out;
+  transition: background-color 100ms ease-out, transform 100ms ease-out;
 }
 
 .btn-blue:hover {
   background-color: var(--accent-hover);
   opacity: 1;
+}
+
+.btn-blue:active {
+  transform: scale(0.98);
 }
 
 /* Apple product card shadow — the ONLY shadow in the app */

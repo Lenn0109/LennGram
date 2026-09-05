@@ -54,8 +54,9 @@ export function FilterPills({ tags, active }: FilterPillsProps) {
                 className={[
                   'inline-flex h-7 items-center px-3 rounded-pill text-[12px] tracking-tight',
                   'transition-colors duration-fast ease-out',
+                  'active:scale-95',
                   isActive
-                    ? 'bg-text text-bg font-semibold'
+                    ? 'bg-accent text-bg font-semibold'
                     : 'bg-bg-muted text-text-2 hover:bg-bg-hover font-medium',
                 ].join(' ')}
               >

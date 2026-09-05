@@ -17,7 +17,7 @@ export function TopNav() {
             LennGram
           </span>
         </Link>
-        <nav className="flex items-center gap-1 text-text" aria-label="Top">
+        <nav className="flex items-center gap-1.5 text-text" aria-label="Top">
           <Link
             href="https://github.com/Lenn0109"
             target="_blank"
@@ -29,10 +29,14 @@ export function TopNav() {
           </Link>
           <Link
             href="/admin"
-            className="inline-flex h-7 items-center px-3 rounded-pill text-[12px] font-medium bg-text text-bg hover:opacity-90"
+            className="inline-flex h-7 w-7 items-center justify-center rounded-pill text-text-2 hover:text-text hover:bg-bg-muted"
             aria-label="Sign in"
+            title="Sign in"
           >
-            Sign in
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <circle cx="12" cy="8" r="4" />
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            </svg>
           </Link>
         </nav>
       </div>

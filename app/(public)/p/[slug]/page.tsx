@@ -1,12 +1,14 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ChevronLeft, ExternalLink, Github } from 'lucide-react';
+import { ChevronLeft, ExternalLink, Github, ArrowLeft, ArrowRight } from 'lucide-react';
 import type { Metadata } from 'next';
 import { Markdown } from '@/components/project/Markdown';
 import { ProjectActions } from '@/components/project/ProjectActions';
 import { ViewTracker } from '@/components/project/ViewTracker';
 import { RelatedProjects } from '@/components/project/RelatedProjects';
+import { Comments } from '@/components/project/Comments';
 import { getProjectBySlug, getFeed } from '@/lib/queries';
+import { MOCK_COMMENTS, formatTechName } from '@/lib/mock';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -43,23 +45,37 @@ export default async function ProjectPage({ params }: PageProps) {
   const { project, recentViews } = await getProjectBySlug(slug);
   if (!project) notFound();
 
-  // Fetch feed for related projects + tags
   const { items: allItems } = await getFeed({ pageSize: 50 });
-  const related = allItems
-    .filter((p) => p.id !== project.id)
-    .slice(0, 3);
+  const others = allItems.filter((p) => p.id !== project.id);
+  const related = others.slice(0, 3);
+
+  // prev/next navigation — index of current project in feed
+  const allOrdered = allItems;
+  const idx = allOrdered.findIndex((p) => p.id === project.id);
+  const prev = idx > 0 ? allOrdered[idx - 1] : null;
+  const next = idx >= 0 && idx < allOrdered.length - 1 ? allOrdered[idx + 1] : null;
+
+  // Comments (mock)
+  const comments = MOCK_COMMENTS[project.slug] ?? [];
 
   return (
     <main className="bg-bg">
-      {/* Breadcrumb — Apple-style back link sticky under nav */}
+      {/* Breadcrumb */}
       <div className="border-b border-border">
-        <div className="mx-auto max-w-apple px-4 sm:px-6 h-11 flex items-center">
+        <div className="mx-auto max-w-apple px-4 sm:px-6 h-11 flex items-center justify-between">
           <Link
             href="/"
             className="inline-flex items-center gap-1 text-[13px] tracking-tight text-accent hover:underline"
           >
             <ChevronLeft className="h-4 w-4" strokeWidth={2} />
             Back to feed
+          </Link>
+          <Link
+            href="/#contact"
+            className="hidden sm:inline-flex items-center gap-1.5 text-[13px] tracking-tight text-text-muted hover:text-text"
+          >
+            Get in touch
+            <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
           </Link>
         </div>
       </div>
@@ -81,6 +97,11 @@ export default async function ProjectPage({ params }: PageProps) {
                     {project.title}
                   </div>
                 )}
+                {project.featured && (
+                  <span className="absolute top-3 left-3 inline-flex items-center gap-1 h-6 px-2.5 rounded-pill bg-bg/90 backdrop-blur text-[11px] font-semibold tracking-tight text-text">
+                    ★ Featured
+                  </span>
+                )}
               </div>
 
               <div className="flex flex-wrap gap-1.5">
@@ -90,7 +111,7 @@ export default async function ProjectPage({ params }: PageProps) {
                     href={`/?tech=${encodeURIComponent(tag)}`}
                     className="inline-flex items-center px-2.5 h-[26px] rounded-pill text-[12px] tracking-tight text-accent font-medium hover:bg-accent/10 transition-colors"
                   >
-                    #{tag}
+                    #{formatTechName(tag)}
                   </Link>
                 ))}
               </div>
@@ -138,13 +159,13 @@ export default async function ProjectPage({ params }: PageProps) {
           <article className="lg:col-span-7">
             <header className="mb-6 space-y-2">
               <p className="text-eyebrow text-text-muted">
-                {project.featured ? 'Featured' : 'Project'}
+                {project.featured ? 'Featured project' : 'Project'}
               </p>
               <h1 className="font-display text-[40px] sm:text-[48px] text-text">
                 {project.title}
               </h1>
               <p className="text-[13px] text-text-muted tracking-tight">
-                {new Date(project.created_at).toLocaleDateString('en-US', {
+                Shipped {new Date(project.created_at).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'short',
                   day: 'numeric',
@@ -155,8 +176,52 @@ export default async function ProjectPage({ params }: PageProps) {
             <div className="prose-like text-[17px] text-text-2 leading-relaxed">
               <Markdown source={project.description} />
             </div>
+
+            {/* Comments — fixes the broken #comments anchor */}
+            {comments.length > 0 && <Comments comments={comments} />}
           </article>
         </div>
+
+        {/* Prev/Next pager */}
+        {(prev || next) && (
+          <nav
+            aria-label="Project navigation"
+            className="mt-16 sm:mt-20 grid grid-cols-1 sm:grid-cols-2 gap-3"
+          >
+            {prev ? (
+              <Link
+                href={`/p/${prev.slug}`}
+                className="group flex items-center gap-3 p-5 rounded-md border border-border bg-bg hover:border-border-strong transition-colors"
+              >
+                <ArrowLeft className="h-4 w-4 text-text-muted group-hover:-translate-x-0.5 transition-transform" strokeWidth={2} />
+                <div className="min-w-0">
+                  <p className="text-[11px] uppercase tracking-wide text-text-muted">Previous</p>
+                  <p className="text-[15px] font-semibold tracking-tight text-text truncate">
+                    {prev.title}
+                  </p>
+                </div>
+              </Link>
+            ) : (
+              <span aria-hidden />
+            )}
+            {next ? (
+              <Link
+                href={`/p/${next.slug}`}
+                className="group flex items-center justify-end gap-3 p-5 rounded-md border border-border bg-bg hover:border-border-strong transition-colors text-right"
+              >
+                <div className="min-w-0">
+                  <p className="text-[11px] uppercase tracking-wide text-text-muted">Next</p>
+                  <p className="text-[15px] font-semibold tracking-tight text-text truncate">
+                    {next.title}
+                  </p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-text-muted group-hover:translate-x-0.5 transition-transform" strokeWidth={2} />
+              </Link>
+            ) : (
+              <span aria-hidden />
+            )}
+          </nav>
+        )}
 
         {related.length > 0 && (
           <div className="mt-16 sm:mt-24">

@@ -37,7 +37,7 @@ export function Footer() {
           ))}
         </ul>
         <p className="mt-4 text-[12px] text-text-muted tracking-tight">
-          © 2026 LennGram from lenn0109
+          Built by <a href="https://github.com/Lenn0109" target="_blank" rel="noopener noreferrer" className="hover:text-text">lenn0109</a> · © 2026
         </p>
       </div>
     </footer>
