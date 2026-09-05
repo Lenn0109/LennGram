@@ -1,4 +1,3 @@
-import { TopNav } from '@/components/feed/TopNav';
 import { FilterChips } from '@/components/feed/FilterChips';
 import { LoadMore } from '@/components/feed/LoadMore';
 import { getFeed } from '@/lib/queries';
@@ -14,9 +13,7 @@ export default async function HomePage({ searchParams }: PageProps) {
   const { items, hasMore, tags } = await getFeed({ tech });
 
   return (
-    <>
-      <TopNav />
-      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+    <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         <section className="mb-6 space-y-3">
           <h1 className="text-3xl font-bold tracking-tightest">
             Projects
@@ -33,7 +30,6 @@ export default async function HomePage({ searchParams }: PageProps) {
         )}
 
         <LoadMore initialItems={items} hasMore={hasMore} tech={tech} />
-      </main>
-    </>
+    </main>
   );
 }

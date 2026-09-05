@@ -23,6 +23,9 @@ export const metadata: Metadata = {
     template: '%s · LennGram',
   },
   description: 'A handmade project portfolio by lenn0109.',
+  icons: {
+    icon: [{ url: '/favicon.png', type: 'image/png' }],
+  },
   openGraph: {
     type: 'website',
     siteName: 'LennGram',

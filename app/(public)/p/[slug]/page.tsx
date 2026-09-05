@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation';
 import { ExternalLink, Github } from 'lucide-react';
 import type { Metadata } from 'next';
-import { TopNav } from '@/components/feed/TopNav';
 import { Markdown } from '@/components/project/Markdown';
 import { LikeButton } from '@/components/project/LikeButton';
 import { ViewTracker } from '@/components/project/ViewTracker';
@@ -46,9 +45,7 @@ export default async function ProjectPage({ params }: PageProps) {
   const { tags: allTags } = await getFeed({ pageSize: 1 });
 
   return (
-    <>
-      <TopNav />
-      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+    <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <aside className="lg:col-span-5">
             <div className="lg:sticky lg:top-8 space-y-4">
@@ -150,7 +147,6 @@ export default async function ProjectPage({ params }: PageProps) {
         </div>
 
         <ViewTracker projectId={project.id} />
-      </main>
-    </>
+    </main>
   );
 }
