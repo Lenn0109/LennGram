@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { IGHomeOutline, IGSearchIcon, IGReelsIcon, IGShopIcon, IGProfileIcon } from '@/components/ui/IgIcons';
+import { IGHomeOutline, IGHeartOutline, IGSaveOutline, IGProfileIcon } from '@/components/ui/IgIcons';
 
 export function BottomNav() {
   const pathname = usePathname();
@@ -12,19 +12,18 @@ export function BottomNav() {
   };
 
   const items = [
-    { href: '/', label: 'Home', icon: IGHomeOutline, filled: true },
-    { href: '/?filter=search', label: 'Search', icon: IGSearchIcon, filled: false },
-    { href: '/?filter=reels', label: 'Reels', icon: IGReelsIcon, filled: true },
-    { href: '/?filter=shop', label: 'Shop', icon: IGShopIcon, filled: false },
-    { href: '/admin', label: 'Profile', icon: IGProfileIcon, filled: true },
+    { href: '/', label: 'Feed', icon: IGHomeOutline, filled: true },
+    { href: '/?filter=liked', label: 'Liked', icon: IGHeartOutline, filled: false },
+    { href: '/?filter=saved', label: 'Saved', icon: IGSaveOutline, filled: false },
+    { href: '/admin', label: 'You', icon: IGProfileIcon, filled: true },
   ];
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-40 bg-bg border-t border-border sm:hidden"
+      className="fixed bottom-0 left-0 right-0 z-40 bg-bg/90 backdrop-blur-xl border-t border-border sm:hidden"
       aria-label="Primary"
     >
-      <ul className="flex items-stretch justify-around h-14">
+      <ul className="flex items-stretch justify-around h-[52px]">
         {items.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.href);
@@ -34,13 +33,18 @@ export function BottomNav() {
                 href={item.href}
                 aria-label={item.label}
                 aria-current={active ? 'page' : undefined}
-                className="flex flex-col items-center justify-center h-full gap-0.5 transition-opacity hover:opacity-70 focus-visible:outline-none"
+                className="flex flex-col items-center justify-center h-full gap-0.5 focus-visible:outline-none"
               >
                 <Icon
                   filled={item.filled && active}
-                  className="h-6 w-6 text-text"
+                  className={['h-[22px] w-[22px]', active ? 'text-accent' : 'text-text-2'].join(' ')}
                 />
-                <span className="text-[10px] font-medium text-text leading-none">
+                <span
+                  className={[
+                    'text-[10px] font-medium tracking-tight leading-none',
+                    active ? 'text-accent' : 'text-text-muted',
+                  ].join(' ')}
+                >
                   {item.label}
                 </span>
               </Link>

@@ -5,56 +5,38 @@ interface StoryStripProps {
   projects: ProjectWithCount[];
 }
 
-// IG story ring gradient (top-down 5-stop, exact IG official colors)
-const RING_GRADIENT =
-  'bg-[linear-gradient(45deg,#feda75_0%,#fa7e1e_25%,#d62976_50%,#962fbf_75%,#4f5bd5_100%)]';
-
-// Variations so it doesn't look like all 8 stories are the same ring
-const RING_VARIANTS = [
-  RING_GRADIENT,
-  'bg-[conic-gradient(from_180deg_at_50%_50%,#feda75_0deg,#fa7e1e_45deg,#d62976_90deg,#962fbf_180deg,#4f5bd5_270deg,#feda75_360deg)]',
-  'bg-[linear-gradient(45deg,#405de6_0%,#5851db_25%,#833ab4_50%,#c13584_75%,#e1306c_100%)]',
-  'bg-[linear-gradient(45deg,#f09433_0%,#e6683c_25%,#dc2743_50%,#cc2366_75%,#bc1888_100%)]',
-];
-
-function pickRing(id: string, index: number) {
+// Apple-style: 56px square thumbnails with hairline border, no rainbow ring.
+// Unseen = subtle blue dot, seen = no dot. Cleaner than IG's loud gradient.
+function pickSeen(id: string) {
   let hash = 0;
   for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) | 0;
-  return RING_VARIANTS[(Math.abs(hash) + index) % RING_VARIANTS.length];
+  return (Math.abs(hash) % 3) !== 0; // ~67% seen
 }
 
 export function StoryStrip({ projects }: StoryStripProps) {
   return (
-    <section
-      className="bg-bg border-b border-border"
-      aria-label="Project highlights"
-    >
-      <ul className="flex items-start gap-4 overflow-x-auto px-4 sm:px-6 py-3 no-scrollbar">
-        {projects.slice(0, 8).map((project, i) => {
-          const ring = pickRing(project.id, i);
+    <section className="bg-bg border-b border-border" aria-label="Project highlights">
+      <ul className="flex items-start gap-3 overflow-x-auto px-4 sm:px-6 py-3 no-scrollbar">
+        {projects.slice(0, 7).map((project) => {
           const initial = project.title.charAt(0).toUpperCase();
-          const seen = i > 0; // first story always unread
+          const seen = pickSeen(project.id);
           return (
             <li key={project.id} className="shrink-0">
               <Link
                 href={`/p/${project.slug}`}
-                className="flex flex-col items-center gap-1 w-16 focus-visible:outline-none"
+                className="flex flex-col items-center gap-1.5 w-[64px] text-text"
               >
-                <span
-                  className={[
-                    'h-[64px] w-[64px] rounded-full p-[2.5px]',
-                    seen ? 'bg-border-strong' : ring,
-                  ].join(' ')}
-                  aria-hidden
-                >
-                  <span className="h-full w-full rounded-full bg-bg p-[2px] block">
-                    <span className="h-full w-full rounded-full bg-bg-muted flex items-center justify-center text-[15px] font-semibold text-text">
-                      {initial}
-                    </span>
-                  </span>
+                <span className="relative h-14 w-14 rounded-md overflow-hidden bg-bg-muted flex items-center justify-center text-[20px] font-semibold tracking-tightest text-text-2">
+                  {initial}
+                  {!seen && (
+                    <span
+                      className="absolute top-1 right-1 h-2 w-2 rounded-full bg-accent border border-bg"
+                      aria-label="Unread"
+                    />
+                  )}
                 </span>
-                <span className="text-[11px] text-text-muted truncate w-full text-center leading-tight">
-                  {project.title.toLowerCase()}
+                <span className="text-[11px] text-text-muted tracking-tight truncate w-full text-center leading-tight">
+                  {project.title.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 9)}
                 </span>
               </Link>
             </li>
