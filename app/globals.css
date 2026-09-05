@@ -79,6 +79,91 @@ a:focus-visible {
   animation: fadeIn 150ms ease-out;
 }
 
+.prose-like h1,
+.prose-like h2,
+.prose-like h3 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+
+.prose-like h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.prose-like h2 {
+  font-size: 1.5rem;
+}
+
+.prose-like h3 {
+  font-size: 1.25rem;
+}
+
+.prose-like p {
+  margin-bottom: 1rem;
+}
+
+.prose-like ul,
+.prose-like ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.prose-like ul {
+  list-style: disc;
+}
+
+.prose-like ol {
+  list-style: decimal;
+}
+
+.prose-like li {
+  margin-bottom: 0.25rem;
+}
+
+.prose-like code {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.875em;
+  background: var(--bg-muted);
+  padding: 0.1em 0.35em;
+}
+
+.prose-like pre {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  background: var(--bg-muted);
+  padding: 1rem;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.prose-like pre code {
+  background: transparent;
+  padding: 0;
+}
+
+.prose-like a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.prose-like a:hover {
+  text-decoration-thickness: 2px;
+}
+
+.prose-like blockquote {
+  border-left: 2px solid var(--border-strong);
+  padding-left: 1rem;
+  color: var(--text-muted);
+  margin: 1rem 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
