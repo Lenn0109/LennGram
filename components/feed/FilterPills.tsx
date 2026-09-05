@@ -1,0 +1,70 @@
+'use client';
+
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useTransition } from 'react';
+
+interface FilterPillsProps {
+  tags: string[];
+  active: string | null;
+}
+
+export function FilterPills({ tags, active }: FilterPillsProps) {
+  const router = useRouter();
+  const sp = useSearchParams();
+  const [isPending, startTransition] = useTransition();
+
+  function select(next: string | null) {
+    if ((next ?? null) === (active ?? null)) return;
+    const params = new URLSearchParams(sp.toString());
+    if (next) params.set('tech', next);
+    else params.delete('tech');
+    const qs = params.toString();
+    startTransition(() => {
+      router.push(qs ? `/?${qs}` : '/', { scroll: false });
+      // smooth scroll to top of feed after a tick so the new content is in DOM
+      requestAnimationFrame(() => {
+        const target = document.getElementById('feed-top');
+        target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  }
+
+  const items: Array<{ label: string; value: string | null }> = [
+    { label: 'All', value: null },
+    ...tags.map((t) => ({ label: t, value: t })),
+  ];
+
+  return (
+    <nav
+      aria-label="Filter by tech"
+      className="bg-bg border-b border-border sticky top-11 z-30"
+    >
+      <ul
+        className="flex items-center gap-1.5 overflow-x-auto px-4 sm:px-6 py-2.5 no-scrollbar"
+        style={{ opacity: isPending ? 0.6 : 1, transition: 'opacity 100ms' }}
+      >
+        {items.map((item) => {
+          const isActive = (item.value ?? null) === (active ?? null);
+          return (
+            <li key={item.label} className="shrink-0">
+              <button
+                type="button"
+                onClick={() => select(item.value)}
+                aria-pressed={isActive}
+                className={[
+                  'inline-flex h-7 items-center px-3 rounded-pill text-[12px] tracking-tight',
+                  'transition-colors duration-fast ease-out',
+                  isActive
+                    ? 'bg-text text-bg font-semibold'
+                    : 'bg-bg-muted text-text-2 hover:bg-bg-hover font-medium',
+                ].join(' ')}
+              >
+                {item.label}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  );
+}

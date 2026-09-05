@@ -2,13 +2,37 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { IGHeartOutline, IGComment, IGPaperPlane, IGSaveOutline, IGMore } from '@/components/ui/IgIcons';
 import { CoverArt } from '@/components/feed/CoverArt';
+import { useToast } from '@/components/ui/Toast';
 import type { ProjectWithCount } from '@/lib/types';
 
 interface ProjectCardProps {
   project: ProjectWithCount;
   index?: number;
+}
+
+const SAVED_KEY = 'lenngram:saved';
+
+function readSaved(): Set<string> {
+  if (typeof window === 'undefined') return new Set();
+  try {
+    const raw = localStorage.getItem(SAVED_KEY);
+    if (!raw) return new Set();
+    const arr = JSON.parse(raw) as unknown;
+    return Array.isArray(arr) ? new Set(arr.filter((x): x is string => typeof x === 'string')) : new Set();
+  } catch {
+    return new Set();
+  }
+}
+
+function writeSaved(s: Set<string>) {
+  try {
+    localStorage.setItem(SAVED_KEY, JSON.stringify(Array.from(s)));
+  } catch {
+    // ignore quota / private mode
+  }
 }
 
 function relativeTime(iso: string) {
@@ -25,11 +49,18 @@ function relativeTime(iso: string) {
 }
 
 export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
+  const router = useRouter();
+  const { show } = useToast();
   const [liked, setLiked] = useState(false);
   const [count, setCount] = useState(project.like_count);
   const [saved, setSaved] = useState(false);
+  const [pending, setPending] = useState(false);
   const [entered, setEntered] = useState(false);
   const lastTapRef = useRef(0);
+
+  useEffect(() => {
+    setSaved(readSaved().has(project.id));
+  }, [project.id]);
 
   useEffect(() => {
     const delay = Math.min(index * 60, 480);
@@ -38,19 +69,36 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
   }, [index]);
 
   async function toggleLike() {
+    if (pending) return;
     const next = !liked;
     const newCount = next ? count + 1 : Math.max(0, count - 1);
     setLiked(next);
     setCount(newCount);
+    setPending(true);
     try {
-      await fetch('/api/like', {
+      const res = await fetch('/api/like', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ projectId: project.id, unlike: !next }),
       });
+      if (!res.ok) {
+        setLiked(!next);
+        setCount(count);
+        if (res.status === 429) {
+          show('Slow down — too many likes', 'error');
+        } else {
+          show('Could not save like', 'error');
+        }
+      } else {
+        const data = (await res.json()) as { totalLikes?: number };
+        if (typeof data.totalLikes === 'number') setCount(data.totalLikes);
+      }
     } catch {
       setLiked(!next);
       setCount(count);
+      show('Network error', 'error');
+    } finally {
+      setPending(false);
     }
   }
 
@@ -60,6 +108,39 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
       void toggleLike();
     }
     lastTapRef.current = now;
+  }
+
+  function toggleSaved() {
+    const next = !saved;
+    setSaved(next);
+    const all = readSaved();
+    if (next) all.add(project.id);
+    else all.delete(project.id);
+    writeSaved(all);
+    show(next ? 'Saved' : 'Removed from saved', 'success');
+  }
+
+  async function shareProject() {
+    const url = `${window.location.origin}/p/${project.slug}`;
+    const title = `${project.title} — LennGram`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, url });
+        return;
+      } catch {
+        // user cancelled or not supported, fall through to copy
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      show('Link copied', 'success');
+    } catch {
+      show('Could not copy link', 'error');
+    }
+  }
+
+  function filterByTag(tag: string) {
+    router.push(`/?tech=${encodeURIComponent(tag)}`, { scroll: false });
   }
 
   const time = relativeTime(project.created_at);
@@ -74,7 +155,6 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
         entered ? 'opacity-100' : 'opacity-0',
       ].join(' ')}
     >
-      {/* Header — minimal, Apple-like: small avatar + 13px username + verified + more */}
       <header className="flex items-center justify-between px-4 sm:px-5 pt-3.5 pb-2.5">
         <Link
           href={`/p/${project.slug}`}
@@ -108,7 +188,6 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
         </button>
       </header>
 
-      {/* Cover — 4:5 with subtle Apple shadow */}
       <button
         type="button"
         onClick={handleClick}
@@ -126,7 +205,6 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
           <CoverArt project={project} />
         )}
 
-        {/* Carousel dots (3 — IG convention for multi-image) */}
         <div className="absolute bottom-2.5 left-0 right-0 flex items-center justify-center gap-1" aria-hidden>
           <span className="h-1 w-1 rounded-full bg-white shadow-apple-soft" />
           <span className="h-1 w-1 rounded-full bg-white/40" />
@@ -134,7 +212,6 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
         </div>
       </button>
 
-      {/* Action bar — Apple-style minimal: 22px icons, tight spacing */}
       <div className="flex items-center justify-between px-4 sm:px-5 pt-3 pb-1">
         <div className="flex items-center gap-4 text-text">
           <button
@@ -158,6 +235,7 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
           </a>
           <button
             type="button"
+            onClick={() => void shareProject()}
             className="hover:opacity-60 transition-opacity"
             aria-label="Share"
           >
@@ -166,7 +244,7 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
         </div>
         <button
           type="button"
-          onClick={() => setSaved((s) => !s)}
+          onClick={toggleSaved}
           className="hover:opacity-60 transition-opacity"
           aria-label={saved ? 'Unsave' : 'Save'}
           aria-pressed={saved}
@@ -175,14 +253,12 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
         </button>
       </div>
 
-      {/* Likes — Apple-style 13px semibold, no comma padding */}
       <div className="px-4 sm:px-5 pt-0.5 pb-1.5">
         <p className="text-[13px] font-semibold tracking-tight text-text tabular-nums">
           {count.toLocaleString()} {count === 1 ? 'like' : 'likes'}
         </p>
       </div>
 
-      {/* Caption — 14px body, single tight block */}
       <div className="px-4 sm:px-5 pb-1.5">
         <p className="text-[14px] text-text leading-snug tracking-tight">
           <Link
@@ -202,21 +278,21 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
         </p>
       </div>
 
-      {/* Tech chips — Apple Blue 13px, tight inline */}
       {project.tech_stack.length > 0 && (
         <div className="px-4 sm:px-5 pb-2 flex flex-wrap gap-1.5">
           {project.tech_stack.slice(0, 4).map((t) => (
-            <span
+            <button
+              type="button"
               key={t}
-              className="inline-flex items-center px-2 h-[22px] rounded-full text-[12px] tracking-tight text-accent font-medium"
+              onClick={() => filterByTag(t)}
+              className="inline-flex items-center px-2 h-[22px] rounded-pill text-[12px] tracking-tight text-accent font-medium hover:bg-accent/10 transition-colors"
             >
               #{t}
-            </span>
+            </button>
           ))}
         </div>
       )}
 
-      {/* Comment + time — single quiet line */}
       <div className="px-4 sm:px-5 pb-4 pt-0.5 flex items-center justify-between">
         <Link
           href={`/p/${project.slug}#comments`}
