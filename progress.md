@@ -8,12 +8,13 @@
 |---|---|---|
 | 0 | Docs + Supabase schema | ✅ done |
 | 1 | Scaffold Next.js 15 + Tailwind v3 | ✅ done |
-| 2 | Public feed (masonry) + project detail | ✅ done |
+| 2 | Public feed (IG-style 1-col) + project detail | ✅ done |
 | 3 | Like (IP hash) + view counter API | ✅ done |
 | 4 | Admin auth (password cookie) | ✅ done |
 | 5 | Admin dashboard (CRUD + image upload) | ✅ done |
 | 6 | Polish (empty states, SEO, OG) | ✅ done |
-| 7 | Deploy (Vercel + Supabase) | ⏳ pending orchestrator |
+| 7 | UI redesign: IG/Twitter-style 1-col feed, square covers, double-tap, story strip, bottom nav | ✅ done |
+| 8 | Deploy (Vercel + Supabase) | ⏳ pending env vars from user |
 
 ## Phase log
 
