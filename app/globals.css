@@ -30,6 +30,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  /* Smooth scroll globally — feels premium */
+  scroll-behavior: smooth;
+  /* Momentum scroll on iOS */
+  -webkit-overflow-scrolling: touch;
   /* Vercel-style letter-spacing scale: aggressive negative at display */
   --tracking-display: -0.05em;   /* 48px+ */
   --tracking-heading: -0.03em;   /* 32-40px */
@@ -331,6 +335,25 @@ a:focus-visible {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Custom scrollbar — premium feel on desktop */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
 }
 
 /* Vercel-style: aggressive negative letter-spacing at display sizes */

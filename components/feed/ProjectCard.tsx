@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { IGHeartOutline, IGComment, IGPaperPlane, IGSaveOutline } from '@/components/ui/IgIcons';
@@ -80,6 +80,7 @@ export function ProjectCard({
   const [saved, setSaved] = useState(false);
   const [pending, setPending] = useState(false);
   const [entered, setEntered] = useState(false);
+  const cardRef = useRef<HTMLElement>(null);
   const lastTapRef = useRef(0);
 
   useEffect(() => {
@@ -87,11 +88,22 @@ export function ProjectCard({
     setLiked(readLocalIds(LIKED_KEY).has(project.id));
   }, [project.id]);
 
+  // Scroll-driven entrance: animate when card enters viewport
   useEffect(() => {
-    const delay = Math.min(index * 60, 480);
-    const t = setTimeout(() => setEntered(true), delay);
-    return () => clearTimeout(t);
-  }, [index]);
+    const el = cardRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setEntered(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.05, rootMargin: '0px 0px -40px 0px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   async function toggleLike() {
     if (pending) return;
@@ -191,11 +203,12 @@ export function ProjectCard({
 
   return (
     <article
+      ref={cardRef as React.Ref<HTMLElement>}
       className={[
         'bg-bg',
         isFirst ? '' : 'border-t border-border',
-        'transition-opacity duration-300 ease-out',
-        entered ? 'opacity-100' : 'opacity-0',
+        'transition-all duration-300 ease-out',
+        entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4',
       ].join(' ')}
     >
       <header className="flex items-center gap-2.5 px-4 sm:px-5 pt-3.5 pb-2.5">
