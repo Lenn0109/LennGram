@@ -8,6 +8,7 @@ import { ViewTracker } from '@/components/project/ViewTracker';
 import { RelatedProjects } from '@/components/project/RelatedProjects';
 import { Comments } from '@/components/project/Comments';
 import { CoverArt } from '@/components/feed/CoverArt';
+import { StickyBreadcrumb } from '@/components/project/StickyBreadcrumb';
 import { getProjectBySlug, getFeed } from '@/lib/queries';
 import { MOCK_COMMENTS, formatTechName, descriptionSnippet } from '@/lib/mock';
 
@@ -61,25 +62,8 @@ export default async function ProjectPage({ params }: PageProps) {
 
   return (
     <main className="bg-bg">
-      {/* Breadcrumb */}
-      <div className="border-b border-border">
-        <div className="mx-auto max-w-apple px-4 sm:px-6 h-11 flex items-center justify-between">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1 text-[13px] tracking-tight text-accent hover:underline"
-          >
-            <ChevronLeft className="h-4 w-4" strokeWidth={2} />
-            Back to projects
-          </Link>
-          <Link
-            href="/#contact"
-            className="hidden sm:inline-flex items-center gap-1.5 text-[13px] tracking-tight text-text-muted hover:text-text"
-          >
-            Get in touch
-            <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
-          </Link>
-        </div>
-      </div>
+      {/* Sticky breadcrumb — appears after scroll, replaces inline */}
+      <StickyBreadcrumb trailing={project.title} />
 
       <div className="mx-auto max-w-apple px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
@@ -115,32 +99,56 @@ export default async function ProjectPage({ params }: PageProps) {
                 ))}
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                {project.repo_url && (
-                  <a
-                    href={project.repo_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 h-9 px-4 rounded-pill border border-border bg-bg text-text text-[13px] tracking-tight hover:bg-bg-muted transition-colors"
-                  >
-                    <Github strokeWidth={1.75} className="h-4 w-4" aria-hidden />
-                    Repository
-                  </a>
-                )}
-                {project.demo_url && (
-                  <a
-                    href={project.demo_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 h-9 px-4 rounded-pill bg-text text-bg text-[13px] tracking-tight hover:opacity-90 transition-opacity"
-                  >
-                    <ExternalLink strokeWidth={1.75} className="h-4 w-4" aria-hidden />
-                    Live demo
-                  </a>
-                )}
-              </div>
+              {(project.repo_url || project.demo_url) && (
+                <div className="flex flex-wrap gap-2">
+                  {project.repo_url && (
+                    <a
+                      href={project.repo_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 h-9 px-4 rounded-pill border border-border bg-bg text-text text-[13px] tracking-tight hover:bg-bg-muted transition-colors"
+                    >
+                      <Github strokeWidth={1.75} className="h-4 w-4" aria-hidden />
+                      Repository
+                    </a>
+                  )}
+                  {project.demo_url && (
+                    <a
+                      href={project.demo_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 h-9 px-4 rounded-pill bg-text text-bg text-[13px] tracking-tight hover:opacity-90 transition-opacity"
+                    >
+                      <ExternalLink strokeWidth={1.75} className="h-4 w-4" aria-hidden />
+                      Live demo
+                    </a>
+                  )}
+                </div>
+              )}
 
-              <div className="pt-1">
+              <p className="text-[12px] text-text-muted tracking-tight tabular-nums pt-1">
+                {recentViews} viewer{recentViews === 1 ? '' : 's'} this week
+              </p>
+            </div>
+          </aside>
+
+          <article className="lg:col-span-7">
+            <header className="mb-6">
+              <p className="text-eyebrow text-text-muted">
+                {project.featured ? 'Featured project' : 'Project'}
+              </p>
+              <h1 className="mt-2 font-display text-[40px] sm:text-[48px] text-text tracking-tightest">
+                {project.title}
+              </h1>
+              <p className="mt-2 text-[13px] text-text-muted tracking-tight">
+                Shipped {new Date(project.created_at).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                })}
+              </p>
+              {/* Action bar — placed under title, where users look first */}
+              <div className="mt-5">
                 <ProjectActions
                   projectId={project.id}
                   slug={project.slug}
@@ -148,28 +156,7 @@ export default async function ProjectPage({ params }: PageProps) {
                   initialCount={project.like_count}
                   initialSaved={false}
                 />
-                <p className="mt-2 text-[12px] text-text-muted tracking-tight tabular-nums">
-                  {recentViews} viewer{recentViews === 1 ? '' : 's'} this week
-                </p>
               </div>
-            </div>
-          </aside>
-
-          <article className="lg:col-span-7">
-            <header className="mb-6 space-y-2">
-              <p className="text-eyebrow text-text-muted">
-                {project.featured ? 'Featured project' : 'Project'}
-              </p>
-              <h1 className="font-display text-[40px] sm:text-[48px] text-text">
-                {project.title}
-              </h1>
-              <p className="text-[13px] text-text-muted tracking-tight">
-                Shipped {new Date(project.created_at).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                })}
-              </p>
             </header>
 
             <div className="prose-like text-[17px] text-text-2 leading-relaxed">

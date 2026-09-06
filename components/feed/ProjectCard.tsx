@@ -12,6 +12,13 @@ import type { ProjectWithCount } from '@/lib/types';
 interface ProjectCardProps {
   project: ProjectWithCount;
   index?: number;
+  /** When provided, the parent owns the like/save state and the card calls these on toggle. */
+  onLikeChange?: (liked: boolean) => void;
+  onSaveChange?: (saved: boolean) => void;
+  /** Optional callback when user "removes" this card from a personal list (called on unlike OR unsave). */
+  onRemoveFromList?: () => void;
+  /** Hide specific action buttons. Useful in /liked where the entry IS the like — show only unsave-style. */
+  hideActions?: ('like' | 'save' | 'share' | 'comment')[];
 }
 
 const SAVED_KEY = 'lenngram:saved';
@@ -58,7 +65,14 @@ function relativeTime(iso: string) {
   return `${d.getDate()} ${d.toLocaleString('en', { month: 'short' })}`;
 }
 
-export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
+export function ProjectCard({
+  project,
+  index = 0,
+  onLikeChange,
+  onSaveChange,
+  onRemoveFromList,
+  hideActions = [],
+}: ProjectCardProps) {
   const router = useRouter();
   const { show } = useToast();
   const [liked, setLiked] = useState(false);
@@ -90,6 +104,8 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
     if (next) likedSet.add(project.id);
     else likedSet.delete(project.id);
     writeLocalIds(LIKED_KEY, likedSet);
+    onLikeChange?.(next);
+    if (!next && onRemoveFromList) onRemoveFromList();
     setPending(true);
     try {
       const res = await fetch('/api/like', {
@@ -142,6 +158,8 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
     if (next) all.add(project.id);
     else all.delete(project.id);
     writeSaved(all);
+    onSaveChange?.(next);
+    if (!next && onRemoveFromList) onRemoveFromList();
     show(next ? 'Saved' : 'Removed from saved', 'success');
   }
 
@@ -247,43 +265,51 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
 
       <div className="flex items-center justify-between px-3 sm:px-4 pt-3 pb-1">
         <div className="flex items-center -ml-2 text-text">
-          <button
-            type="button"
-            onClick={() => void toggleLike()}
-            className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] p-2.5 hover:opacity-60 active:scale-95 transition-transform"
-            aria-label={liked ? 'Unlike' : 'Like'}
-            aria-pressed={liked}
-          >
-            <IGHeartOutline
-              filled={liked}
-              className={['h-[22px] w-[22px]', liked ? 'text-accent' : 'text-text'].join(' ')}
-            />
-          </button>
-          <a
-            href={`/p/${project.slug}#comments`}
-            className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] p-2.5 hover:opacity-60 active:scale-95 transition-transform"
-            aria-label="Comments"
-          >
-            <IGComment className="h-[22px] w-[22px] text-text" />
-          </a>
-          <button
-            type="button"
-            onClick={() => void shareProject()}
-            className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] p-2.5 hover:opacity-60 active:scale-95 transition-transform"
-            aria-label="Share"
-          >
-            <IGPaperPlane className="h-[22px] w-[22px] text-text" />
-          </button>
+          {!hideActions.includes('like') && (
+            <button
+              type="button"
+              onClick={() => void toggleLike()}
+              className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] p-2.5 hover:opacity-60 active:scale-95 transition-transform"
+              aria-label={liked ? 'Unlike' : 'Like'}
+              aria-pressed={liked}
+            >
+              <IGHeartOutline
+                filled={liked}
+                className={['h-[22px] w-[22px]', liked ? 'text-accent' : 'text-text'].join(' ')}
+              />
+            </button>
+          )}
+          {!hideActions.includes('comment') && (
+            <a
+              href={`/p/${project.slug}#comments`}
+              className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] p-2.5 hover:opacity-60 active:scale-95 transition-transform"
+              aria-label="Comments"
+            >
+              <IGComment className="h-[22px] w-[22px] text-text" />
+            </a>
+          )}
+          {!hideActions.includes('share') && (
+            <button
+              type="button"
+              onClick={() => void shareProject()}
+              className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] p-2.5 hover:opacity-60 active:scale-95 transition-transform"
+              aria-label="Share"
+            >
+              <IGPaperPlane className="h-[22px] w-[22px] text-text" />
+            </button>
+          )}
         </div>
-        <button
-          type="button"
-          onClick={toggleSaved}
-          className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] p-2.5 -mr-2 hover:opacity-60 active:scale-95 transition-transform"
-          aria-label={saved ? 'Unsave' : 'Save'}
-          aria-pressed={saved}
-        >
-          <IGSaveOutline filled={saved} className="h-[22px] w-[22px] text-text" />
-        </button>
+        {!hideActions.includes('save') && (
+          <button
+            type="button"
+            onClick={toggleSaved}
+            className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] p-2.5 -mr-2 hover:opacity-60 active:scale-95 transition-transform"
+            aria-label={saved ? 'Unsave' : 'Save'}
+            aria-pressed={saved}
+          >
+            <IGSaveOutline filled={saved} className="h-[22px] w-[22px] text-text" />
+          </button>
+        )}
       </div>
 
       <div className="px-4 sm:px-5 pt-0.5 pb-1.5">

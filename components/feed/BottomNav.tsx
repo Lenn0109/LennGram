@@ -12,10 +12,10 @@ export function BottomNav() {
   };
 
   const items = [
-    { href: '/', label: 'Projects', icon: IGHomeOutline, filled: true },
-    { href: '/liked', label: 'Liked', icon: IGHeartOutline, filled: false },
-    { href: '/saved', label: 'Saved', icon: IGSaveOutline, filled: false },
-    { href: '/you', label: 'You', icon: IGProfileIcon, filled: true },
+    { href: '/', label: 'Projects', icon: IGHomeOutline, supportsFill: true },
+    { href: '/liked', label: 'Liked', icon: IGHeartOutline, supportsFill: true },
+    { href: '/saved', label: 'Saved', icon: IGSaveOutline, supportsFill: true },
+    { href: '/you', label: 'You', icon: IGProfileIcon, supportsFill: true },
   ];
 
   return (
@@ -28,7 +28,15 @@ export function BottomNav() {
           const Icon = item.icon;
           const active = isActive(item.href);
           return (
-            <li key={item.label} className="flex-1">
+            <li key={item.label} className="flex-1 relative">
+              {/* Top active indicator — Apple tab bar pattern */}
+              <span
+                aria-hidden
+                className={[
+                  'absolute top-0 left-1/2 -translate-x-1/2 h-[2px] w-8 rounded-b-pill transition-opacity duration-200',
+                  active ? 'bg-accent opacity-100' : 'bg-transparent opacity-0',
+                ].join(' ')}
+              />
               <Link
                 href={item.href}
                 aria-label={item.label}
@@ -36,13 +44,13 @@ export function BottomNav() {
                 className="flex flex-col items-center justify-center h-full gap-0.5 focus-visible:outline-none focus-visible:bg-bg-muted transition-colors"
               >
                 <Icon
-                  filled={item.filled && active}
-                  className={['h-[22px] w-[22px]', active ? 'text-accent' : 'text-text-2'].join(' ')}
+                  filled={item.supportsFill && active}
+                  className={['h-[24px] w-[24px] transition-colors', active ? 'text-accent' : 'text-text-2'].join(' ')}
                 />
                 <span
                   className={[
-                    'text-[10px] font-medium tracking-tight leading-none',
-                    active ? 'text-accent' : 'text-text-muted',
+                    'text-[10px] tracking-tight leading-none transition-colors',
+                    active ? 'text-accent font-semibold' : 'text-text-muted font-medium',
                   ].join(' ')}
                 >
                   {item.label}
