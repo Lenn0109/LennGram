@@ -19,7 +19,7 @@ export default function YouPage() {
               L
             </div>
             <div>
-              <h1 className="font-display text-[36px] sm:text-[56px] text-text tracking-tightest leading-none">
+              <h1 className="font-sans text-[36px] sm:text-[64px] text-text font-semibold tracking-heading leading-[0.95]">
                 lenn0109
               </h1>
               <p className="mt-2 text-[15px] sm:text-[17px] text-text-2 tracking-tight">
@@ -30,14 +30,14 @@ export default function YouPage() {
           <div className="mt-6 flex items-center gap-2">
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 h-9 px-4 rounded-pill bg-text text-bg text-[13px] tracking-tight font-medium hover:opacity-90 transition-opacity"
+              className="inline-flex items-center gap-1.5 h-12 px-5 rounded-pill bg-text text-bg text-[13px] tracking-tight font-semibold hover:opacity-90 transition-opacity"
             >
               View work
               <ArrowRight className="h-4 w-4" strokeWidth={2} aria-hidden />
             </Link>
             <a
               href="mailto:hello@lenngram.dev"
-              className="inline-flex items-center justify-center h-9 w-9 rounded-pill border border-border bg-bg text-text hover:bg-bg-muted transition-colors"
+              className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-border-light bg-bg text-text hover:bg-bg-hover transition-colors"
               aria-label="Send email"
             >
               <Mail className="h-4 w-4" strokeWidth={1.75} aria-hidden />
@@ -46,7 +46,7 @@ export default function YouPage() {
               href="https://github.com/Lenn0109"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center h-9 w-9 rounded-pill border border-border bg-bg text-text hover:bg-bg-muted transition-colors"
+              className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-border-light bg-bg text-text hover:bg-bg-hover transition-colors"
               aria-label="Open GitHub profile (external)"
             >
               <Github className="h-4 w-4" strokeWidth={1.75} aria-hidden />

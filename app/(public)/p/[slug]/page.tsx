@@ -137,7 +137,7 @@ export default async function ProjectPage({ params }: PageProps) {
               <p className="text-eyebrow text-text-muted">
                 {project.featured ? 'Featured project' : 'Project'}
               </p>
-              <h1 className="mt-2 font-display text-[40px] sm:text-[48px] text-text tracking-tightest">
+              <h1 className="mt-2 font-sans text-[40px] sm:text-[56px] text-text font-semibold tracking-display leading-[0.95]">
                 {project.title}
               </h1>
               <p className="mt-2 text-[13px] text-text-muted tracking-tight">

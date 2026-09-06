@@ -21,7 +21,7 @@ export function RelatedProjects({ projects }: RelatedProjectsProps) {
       <header className="mb-6 flex items-end justify-between gap-4">
         <div>
           <p className="text-eyebrow text-text-muted mb-1">More to explore</p>
-          <h2 className="font-display text-[24px] sm:text-[28px] text-text tracking-tightest">
+          <h2 className="font-sans text-[24px] sm:text-[32px] text-text font-semibold tracking-heading leading-tight">
             Other projects.
           </h2>
         </div>

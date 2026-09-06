@@ -22,7 +22,7 @@ export function Comments({ comments }: CommentsProps) {
   return (
     <section id="comments" className="mt-12 pt-10 border-t border-border scroll-mt-24">
       <header className="mb-5">
-        <h2 className="font-display text-[20px] sm:text-[24px] text-text tracking-tightest">
+        <h2 className="font-sans text-[20px] sm:text-[28px] text-text font-semibold tracking-heading leading-tight">
           {comments.length === 1 ? '1 comment' : `${comments.length} comments`}
         </h2>
       </header>

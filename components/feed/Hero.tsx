@@ -35,11 +35,11 @@ export function Hero() {
         </p>
         <h1
           className={[
-            'font-display text-text',
+            'font-sans text-text font-semibold',
             'transition-all duration-base ease-apple',
             compact
-              ? 'text-[20px] sm:text-[32px]'
-              : 'text-[28px] sm:text-[48px]',
+              ? 'text-[20px] sm:text-[32px] tracking-heading'
+              : 'text-[28px] sm:text-[64px] tracking-heading leading-[0.95]',
           ].join(' ')}
         >
           LennGram.

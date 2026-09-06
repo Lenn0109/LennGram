@@ -244,8 +244,9 @@ export function ProjectCard({
         </div>
 
         {project.featured && (
-          <span className="absolute top-3 left-3 inline-flex items-center gap-1 h-6 px-2.5 rounded-pill bg-bg/90 backdrop-blur text-[11px] font-semibold tracking-tight text-text shadow-apple-soft">
-            ★ Featured
+          <span className="absolute top-3 left-3 inline-flex items-center gap-1 h-6 px-2.5 rounded-pill bg-bg/90 backdrop-blur text-[11px] font-semibold tracking-small text-text">
+            <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />
+            Featured
           </span>
         )}
 
@@ -347,7 +348,7 @@ export function ProjectCard({
         >
           View all {Math.max(1, Math.floor(project.like_count / 6))} comments
         </Link>
-        <time className="text-[11px] text-text-subtle tracking-wide uppercase">
+        <time className="text-[11px] text-text-muted tracking-wide uppercase font-medium">
           {time}
         </time>
       </div>

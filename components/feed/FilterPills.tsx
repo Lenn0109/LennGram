@@ -62,8 +62,8 @@ export function FilterPills({ tags, active }: FilterPillsProps) {
                   'transition-colors duration-fast ease-out',
                   'active:scale-95',
                   isActive
-                    ? 'bg-accent text-bg font-semibold'
-                    : 'bg-bg-muted text-text-2 hover:bg-bg-hover font-medium',
+                    ? 'bg-accent text-bg font-semibold shadow-vc'
+                    : 'bg-bg text-text shadow-vc hover:shadow-vc-hover',
                 ].join(' ')}
               >
                 {item.label}

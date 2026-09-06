@@ -48,13 +48,13 @@ export function CoverArt({ project }: CoverArtProps) {
         {project.tech_stack[0] ?? 'lenn0109'}
       </span>
 
-      {/* Centered initial — Apple product display */}
+      {/* Centered initial — Vercel-style compressed display */}
       <span
-        className="font-display select-none"
+        className="font-sans font-semibold select-none"
         style={{
           color: field.mark,
           fontSize: 'clamp(120px, 28vw, 200px)',
-          letterSpacing: '-0.04em',
+          letterSpacing: '-0.05em',
           lineHeight: 1,
         }}
         aria-hidden

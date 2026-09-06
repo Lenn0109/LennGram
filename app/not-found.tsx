@@ -6,7 +6,7 @@ export default function NotFound() {
     <main className="min-h-[80vh] flex items-center justify-center px-6 bg-bg-muted">
       <div className="max-w-md w-full text-center">
         <p className="text-eyebrow text-text-muted">Error 404</p>
-        <h1 className="mt-2 font-display text-[40px] sm:text-[56px] text-text">
+        <h1 className="mt-2 font-sans text-[40px] sm:text-[64px] text-text font-semibold tracking-display leading-[0.95]">
           Page not found.
         </h1>
         <p className="mt-3 text-[17px] text-text-2 tracking-tight leading-relaxed">
