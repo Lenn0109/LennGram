@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { X, Upload } from 'lucide-react';
+import Link from 'next/link';
+import { X, Upload, ArrowLeft } from 'lucide-react';
 import {
   projectFormSchema,
   slugify,
@@ -35,7 +36,6 @@ export function ProjectForm({ initial }: ProjectFormProps) {
   const [displayOrder, setDisplayOrder] = useState<number>(
     initial?.display_order ?? 0,
   );
-
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -78,10 +78,7 @@ export function ProjectForm({ initial }: ProjectFormProps) {
     try {
       const fd = new FormData();
       fd.append('file', file);
-      const res = await fetch('/api/admin/upload', {
-        method: 'POST',
-        body: fd,
-      });
+      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd });
       if (!res.ok) throw new Error('upload_failed');
       const data = (await res.json()) as { url: string };
       setCoverUrl(data.url);
@@ -120,7 +117,6 @@ export function ProjectForm({ initial }: ProjectFormProps) {
       return;
     }
     setErrors({});
-
     setSubmitting(true);
     try {
       const url = initial?.id
@@ -165,188 +161,213 @@ export function ProjectForm({ initial }: ProjectFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <Field label="Title" error={errors.title}>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => {
-            setTitle(e.target.value);
-            if (!slugTouched) setSlug(slugify(e.target.value));
-          }}
-          maxLength={100}
-          required
-          className="w-full px-3 py-2 border border-border-strong bg-bg text-base rounded-sm"
-        />
-      </Field>
+    <form onSubmit={handleSubmit} className="space-y-4">
 
-      <Field label="Slug" hint="URL path: /p/<slug>" error={errors.slug}>
-        <input
-          type="text"
-          value={slug}
-          onChange={(e) => {
-            setSlug(e.target.value);
-            setSlugTouched(true);
-          }}
-          maxLength={100}
-          required
-          className="w-full px-3 py-2 border border-border-strong bg-bg text-base font-mono rounded-sm"
-        />
-      </Field>
+      {/* Title + Slug */}
+      <div className="rounded-xl bg-bg shadow-vc p-5 space-y-4">
+        <div className="grid grid-cols-1 gap-4">
+          <label className="block space-y-1.5">
+            <span className="text-[12px] font-semibold tracking-small uppercase text-text-muted">Title</span>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                if (!slugTouched) setSlug(slugify(e.target.value));
+              }}
+              maxLength={100}
+              required
+              placeholder="e.g. LennMusic"
+              className="w-full h-11 px-4 rounded-xl bg-bg text-[15px] tracking-tight text-text placeholder:text-text-subtle shadow-vc focus:outline-none focus:ring-2 focus:ring-accent/30 transition-shadow duration-base"
+            />
+            {errors.title && <p className="text-[12px] text-[#ff3b30] tracking-tight">{errors.title}</p>}
+          </label>
 
-      <Field label="Description" hint="Markdown supported" error={errors.description}>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-          rows={12}
-          className="w-full px-3 py-2 border border-border-strong bg-bg text-base font-mono rounded-sm"
-        />
-      </Field>
-
-      <Field label="Cover image" error={errors.cover_url}>
-        <div className="border border-dashed border-border-strong p-4">
-          {coverUrl ? (
-            <div className="space-y-2">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={coverUrl}
-                alt="Cover preview"
-                className="max-h-64 w-auto border border-border"
-              />
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setCoverUrl('')}
-                  className="inline-flex items-center gap-1 px-3 py-1 border border-border bg-bg hover:bg-bg-muted text-xs transition-colors duration-fast ease-out"
-                >
-                  <X strokeWidth={1.5} className="h-3 w-3" aria-hidden="true" />
-                  Remove
-                </button>
-                <span className="text-xs text-text-muted font-mono break-all">
-                  {coverUrl}
-                </span>
-              </div>
-            </div>
-          ) : (
-            <label className="cursor-pointer inline-flex items-center gap-2 text-sm text-text-muted">
-              <Upload strokeWidth={1.5} className="h-4 w-4" aria-hidden="true" />
-              {uploading ? 'Uploading…' : 'Click to upload (JPEG / PNG / WebP, max 5 MB)'}
-              <input
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) handleFile(file);
-                }}
-              />
-            </label>
-          )}
+          <label className="block space-y-1.5">
+            <span className="text-[12px] font-semibold tracking-small uppercase text-text-muted">
+              Slug <span className="normal-case font-normal text-text-subtle">/p/</span>
+            </span>
+            <input
+              type="text"
+              value={slug}
+              onChange={(e) => { setSlug(e.target.value); setSlugTouched(true); }}
+              maxLength={100}
+              required
+              placeholder="e.g. lennmusic"
+              className="w-full h-11 px-4 rounded-xl bg-bg text-[15px] tracking-tight text-text placeholder:text-text-subtle shadow-vc focus:outline-none focus:ring-2 focus:ring-accent/30 transition-shadow duration-base font-mono"
+            />
+            {errors.slug && <p className="text-[12px] text-[#ff3b30] tracking-tight">{errors.slug}</p>}
+          </label>
         </div>
-      </Field>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Field label="Repository URL" error={errors.repo_url}>
-          <input
-            type="url"
-            value={repoUrl ?? ''}
-            onChange={(e) => setRepoUrl(e.target.value)}
-            placeholder="https://github.com/..."
-            className="w-full px-3 py-2 border border-border-strong bg-bg text-base rounded-sm"
+        <label className="block space-y-1.5">
+          <span className="text-[12px] font-semibold tracking-small uppercase text-text-muted">
+            Description <span className="normal-case font-normal text-text-subtle">— Markdown</span>
+          </span>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+            rows={10}
+            placeholder="## What&#10;&#10;Brief description&#10;&#10;## Why&#10;&#10;Motivation..."
+            className="w-full px-4 py-3 rounded-xl bg-bg text-[15px] tracking-tight text-text placeholder:text-text-subtle shadow-vc focus:outline-none focus:ring-2 focus:ring-accent/30 transition-shadow duration-base font-mono resize-y"
           />
-        </Field>
-        <Field label="Demo URL" error={errors.demo_url}>
-          <input
-            type="url"
-            value={demoUrl ?? ''}
-            onChange={(e) => setDemoUrl(e.target.value)}
-            placeholder="https://..."
-            className="w-full px-3 py-2 border border-border-strong bg-bg text-base rounded-sm"
-          />
-        </Field>
+          {errors.description && <p className="text-[12px] text-[#ff3b30] tracking-tight">{errors.description}</p>}
+        </label>
       </div>
 
-      <Field
-        label="Tech tags"
-        hint="Press Enter or comma to add. Up to 10."
-        error={errors.tech_stack}
-      >
-        <div className="border border-border-strong px-3 py-2 flex flex-wrap gap-1 items-center bg-bg rounded-sm">
-          {tags.map((tag) => (
-            <span
-              key={tag}
-              className="inline-flex items-center gap-1 bg-bg-muted px-2 py-0.5 text-xs font-mono uppercase tracking-widest"
-            >
-              {tag}
-              <button
-                type="button"
-                onClick={() => setTags((prev) => prev.filter((t) => t !== tag))}
-                className="text-text-muted hover:text-text"
-                aria-label={`Remove tag ${tag}`}
-              >
-                <X strokeWidth={1.5} className="h-3 w-3" />
-              </button>
-            </span>
-          ))}
-          <input
-            type="text"
-            value={tagDraft}
-            onChange={(e) => setTagDraft(e.target.value)}
-            onKeyDown={onTagKeyDown}
-            onBlur={() => addTag(tagDraft)}
-            placeholder={tags.length === 0 ? 'nextjs, supabase, …' : ''}
-            className="flex-1 min-w-[8rem] outline-none bg-transparent text-sm py-1"
-          />
-        </div>
-      </Field>
+      {/* Cover + URLs */}
+      <div className="rounded-xl bg-bg shadow-vc p-5 space-y-4">
+        <label className="block space-y-1.5">
+          <span className="text-[12px] font-semibold tracking-small uppercase text-text-muted">Cover image</span>
+          <div className="rounded-xl border border-dashed border-border p-4">
+            {coverUrl ? (
+              <div className="space-y-3">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={coverUrl}
+                  alt="Cover preview"
+                  className="max-h-48 w-auto rounded-lg shadow-vc"
+                />
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setCoverUrl('')}
+                    className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-bg-muted hover:bg-bg-hover text-[12px] font-medium tracking-tight text-text transition-colors duration-base"
+                  >
+                    <X strokeWidth={1.5} className="h-3 w-3" aria-hidden="true" />
+                    Remove
+                  </button>
+                  <span className="text-[11px] text-text-subtle font-mono truncate">{coverUrl.split('/').pop()}</span>
+                </div>
+              </div>
+            ) : (
+              <label className="cursor-pointer flex items-center gap-2.5 text-[13px] text-text-muted hover:text-text transition-colors duration-base">
+                <Upload strokeWidth={1.5} className="h-4 w-4" aria-hidden="true" />
+                {uploading ? 'Uploading…' : 'Click to upload · JPEG / PNG / WebP · max 5 MB'}
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={(e) => { const file = e.target.files?.[0]; if (file) handleFile(file); }}
+                />
+              </label>
+            )}
+          </div>
+          {errors.cover_url && <p className="text-[12px] text-[#ff3b30] tracking-tight">{errors.cover_url}</p>}
+        </label>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Field label="Status">
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value as 'draft' | 'published')}
-            className="w-full px-3 py-2 border border-border-strong bg-bg text-base rounded-sm"
-          >
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
-          </select>
-        </Field>
-        <Field label="Display order">
-          <input
-            type="number"
-            value={displayOrder}
-            onChange={(e) => setDisplayOrder(Number(e.target.value))}
-            className="w-full px-3 py-2 border border-border-strong bg-bg text-base rounded-sm"
-          />
-        </Field>
-        <Field label="Featured">
-          <label className="flex items-center gap-2 px-3 py-2 border border-border-strong bg-bg rounded-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <label className="block space-y-1.5">
+            <span className="text-[12px] font-semibold tracking-small uppercase text-text-muted">Repository</span>
+            <input
+              type="url"
+              value={repoUrl ?? ''}
+              onChange={(e) => setRepoUrl(e.target.value)}
+              placeholder="https://github.com/..."
+              className="w-full h-11 px-4 rounded-xl bg-bg text-[15px] tracking-tight text-text placeholder:text-text-subtle shadow-vc focus:outline-none focus:ring-2 focus:ring-accent/30 transition-shadow duration-base"
+            />
+          </label>
+          <label className="block space-y-1.5">
+            <span className="text-[12px] font-semibold tracking-small uppercase text-text-muted">Demo URL</span>
+            <input
+              type="url"
+              value={demoUrl ?? ''}
+              onChange={(e) => setDemoUrl(e.target.value)}
+              placeholder="https://..."
+              className="w-full h-11 px-4 rounded-xl bg-bg text-[15px] tracking-tight text-text placeholder:text-text-subtle shadow-vc focus:outline-none focus:ring-2 focus:ring-accent/30 transition-shadow duration-base"
+            />
+          </label>
+        </div>
+      </div>
+
+      {/* Tags + Settings */}
+      <div className="rounded-xl bg-bg shadow-vc p-5 space-y-4">
+        <label className="block space-y-1.5">
+          <span className="text-[12px] font-semibold tracking-small uppercase text-text-muted">
+            Tech tags <span className="normal-case font-normal text-text-subtle">— Enter or comma to add, up to 10</span>
+          </span>
+          <div className="min-h-[52px] px-4 py-3 rounded-xl bg-bg shadow-vc flex flex-wrap gap-2 items-center">
+            {tags.map((tag) => (
+              <span
+                key={tag}
+                className="inline-flex items-center gap-1.5 bg-bg-muted rounded-full px-3 py-1 text-[12px] font-medium tracking-tight text-text"
+              >
+                {tag}
+                <button
+                  type="button"
+                  onClick={() => setTags((prev) => prev.filter((t) => t !== tag))}
+                  className="text-text-muted hover:text-text transition-colors"
+                  aria-label={`Remove ${tag}`}
+                >
+                  <X strokeWidth={1.5} className="h-3 w-3" />
+                </button>
+              </span>
+            ))}
+            <input
+              type="text"
+              value={tagDraft}
+              onChange={(e) => setTagDraft(e.target.value)}
+              onKeyDown={onTagKeyDown}
+              onBlur={() => addTag(tagDraft)}
+              placeholder={tags.length === 0 ? 'nextjs, supabase, …' : ''}
+              className="flex-1 min-w-[8rem] text-[14px] tracking-tight text-text placeholder:text-text-subtle outline-none bg-transparent"
+            />
+          </div>
+          {errors.tech_stack && <p className="text-[12px] text-[#ff3b30] tracking-tight">{errors.tech_stack}</p>}
+        </label>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <label className="block space-y-1.5">
+            <span className="text-[12px] font-semibold tracking-small uppercase text-text-muted">Status</span>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value as 'draft' | 'published')}
+              className="w-full h-11 px-4 rounded-xl bg-bg text-[15px] tracking-tight text-text shadow-vc focus:outline-none focus:ring-2 focus:ring-accent/30 transition-shadow duration-base cursor-pointer"
+            >
+              <option value="draft">Draft</option>
+              <option value="published">Published</option>
+            </select>
+          </label>
+          <label className="block space-y-1.5">
+            <span className="text-[12px] font-semibold tracking-small uppercase text-text-muted">Order</span>
+            <input
+              type="number"
+              value={displayOrder}
+              onChange={(e) => setDisplayOrder(Number(e.target.value))}
+              className="w-full h-11 px-4 rounded-xl bg-bg text-[15px] tracking-tight text-text shadow-vc focus:outline-none focus:ring-2 focus:ring-accent/30 transition-shadow duration-base"
+            />
+          </label>
+          <label className="flex items-end pb-1 gap-2">
             <input
               type="checkbox"
               checked={featured}
               onChange={(e) => setFeatured(e.target.checked)}
-              className="h-4 w-4"
+              id="featured-check"
+              className="h-4 w-4 accent-accent rounded cursor-pointer"
             />
-            <span className="text-sm">Pin to top of feed</span>
+            <label htmlFor="featured-check" className="text-[13px] text-text tracking-tight cursor-pointer select-none">
+              Featured
+            </label>
           </label>
-        </Field>
+        </div>
       </div>
 
       {submitError && (
-        <p className="text-sm border border-border-strong px-3 py-2" role="alert">
+        <p className="text-[13px] text-[#ff3b30] tracking-tight px-4 py-3 bg-[#ff3b30]/5 rounded-xl border border-[#ff3b30]/20" role="alert">
           {submitError}
         </p>
       )}
 
-      <div className="sticky bottom-0 -mx-4 sm:-mx-6 lg:-mx-8 border-t border-border bg-bg px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+      {/* Sticky footer */}
+      <div className="sticky bottom-0 -mx-4 sm:-mx-6 lg:-mx-8 bg-bg shadow-[0_-1px_0_0_rgba(0,0,0,0.06)] px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
         <div>
           {initial?.id && (
             <button
               type="button"
               onClick={handleDelete}
               disabled={submitting}
-              className="px-3 py-2 border border-border bg-bg hover:bg-bg-muted text-sm transition-colors duration-fast ease-out"
+              className="h-10 px-4 rounded-xl border border-border text-[13px] font-medium tracking-tight text-text hover:bg-bg-muted transition-colors duration-base disabled:opacity-50"
             >
               Delete
             </button>
@@ -357,7 +378,7 @@ export function ProjectForm({ initial }: ProjectFormProps) {
             type="button"
             onClick={() => router.push('/admin')}
             disabled={submitting}
-            className="px-3 py-2 border border-border bg-bg hover:bg-bg-muted text-sm transition-colors duration-fast ease-out"
+            className="h-10 px-4 rounded-xl border border-border text-[13px] font-medium tracking-tight text-text hover:bg-bg-muted transition-colors duration-base disabled:opacity-50"
           >
             Cancel
           </button>
@@ -365,36 +386,12 @@ export function ProjectForm({ initial }: ProjectFormProps) {
             type="submit"
             disabled={submitting}
             aria-busy={submitting}
-            className="px-4 py-2 border border-text bg-text text-bg text-sm transition-colors duration-fast ease-out disabled:opacity-50"
+            className="h-10 px-5 bg-accent hover:bg-accent/90 text-white text-[14px] font-semibold tracking-tight rounded-xl shadow-vc hover:shadow-vc-hover transition-all duration-base disabled:opacity-50"
           >
             {submitting ? 'Saving…' : initial?.id ? 'Save' : 'Create'}
           </button>
         </div>
       </div>
     </form>
-  );
-}
-
-interface FieldProps {
-  label: string;
-  hint?: string;
-  error?: string;
-  children: React.ReactNode;
-}
-
-function Field({ label, hint, error, children }: FieldProps) {
-  return (
-    <label className="block space-y-1">
-      <span className="block text-sm font-medium">{label}</span>
-      {hint && (
-        <span className="block text-xs text-text-muted">{hint}</span>
-      )}
-      {children}
-      {error && (
-        <span className="block text-xs text-text-muted" role="alert">
-          {error}
-        </span>
-      )}
-    </label>
   );
 }
