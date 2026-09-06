@@ -13,9 +13,9 @@ export function BottomNav() {
 
   const items = [
     { href: '/', label: 'Projects', icon: IGHomeOutline, filled: true },
-    { href: '/?filter=liked', label: 'Liked', icon: IGHeartOutline, filled: false },
-    { href: '/?filter=saved', label: 'Saved', icon: IGSaveOutline, filled: false },
-    { href: '/admin', label: 'You', icon: IGProfileIcon, filled: true },
+    { href: '/liked', label: 'Liked', icon: IGHeartOutline, filled: false },
+    { href: '/saved', label: 'Saved', icon: IGSaveOutline, filled: false },
+    { href: '/you', label: 'You', icon: IGProfileIcon, filled: true },
   ];
 
   return (

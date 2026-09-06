@@ -15,11 +15,12 @@ interface ProjectCardProps {
 }
 
 const SAVED_KEY = 'lenngram:saved';
+const LIKED_KEY = 'lenngram:liked';
 
-function readSaved(): Set<string> {
+function readLocalIds(key: string): Set<string> {
   if (typeof window === 'undefined') return new Set();
   try {
-    const raw = localStorage.getItem(SAVED_KEY);
+    const raw = localStorage.getItem(key);
     if (!raw) return new Set();
     const arr = JSON.parse(raw) as unknown;
     return Array.isArray(arr) ? new Set(arr.filter((x): x is string => typeof x === 'string')) : new Set();
@@ -28,12 +29,20 @@ function readSaved(): Set<string> {
   }
 }
 
-function writeSaved(s: Set<string>) {
+function writeLocalIds(key: string, s: Set<string>) {
   try {
-    localStorage.setItem(SAVED_KEY, JSON.stringify(Array.from(s)));
+    localStorage.setItem(key, JSON.stringify(Array.from(s)));
   } catch {
-    // ignore quota / private mode
+    // ignore
   }
+}
+
+function readSaved(): Set<string> {
+  return readLocalIds(SAVED_KEY);
+}
+
+function writeSaved(s: Set<string>) {
+  writeLocalIds(SAVED_KEY, s);
 }
 
 function relativeTime(iso: string) {
@@ -61,6 +70,7 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
 
   useEffect(() => {
     setSaved(readSaved().has(project.id));
+    setLiked(readLocalIds(LIKED_KEY).has(project.id));
   }, [project.id]);
 
   useEffect(() => {
@@ -75,6 +85,11 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
     const newCount = next ? count + 1 : Math.max(0, count - 1);
     setLiked(next);
     setCount(newCount);
+    // Mirror to localStorage so /liked page can list this user's likes
+    const likedSet = readLocalIds(LIKED_KEY);
+    if (next) likedSet.add(project.id);
+    else likedSet.delete(project.id);
+    writeLocalIds(LIKED_KEY, likedSet);
     setPending(true);
     try {
       const res = await fetch('/api/like', {
@@ -85,6 +100,11 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
       if (!res.ok) {
         setLiked(!next);
         setCount(count);
+        // Roll back localStorage too
+        const rollback = readLocalIds(LIKED_KEY);
+        if (next) rollback.delete(project.id);
+        else rollback.add(project.id);
+        writeLocalIds(LIKED_KEY, rollback);
         if (res.status === 429) {
           show('Slow down — too many likes', 'error');
         } else {
@@ -97,6 +117,10 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
     } catch {
       setLiked(!next);
       setCount(count);
+      const rollback = readLocalIds(LIKED_KEY);
+      if (next) rollback.delete(project.id);
+      else rollback.add(project.id);
+      writeLocalIds(LIKED_KEY, rollback);
       show('Network error', 'error');
     } finally {
       setPending(false);
