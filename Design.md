@@ -1,263 +1,267 @@
 # LennGram — Design System
 
-> Monochrome light theme. Handmade, restrained, intentional.
+> Apple DNA + Vercel token discipline. Monochrome foundation with single blue accent.
+> Handmade, restrained, intentional.
 
 ## 1. Visual theme
 
 | Property | Value |
 |---|---|
 | Theme | Light only (no dark mode toggle) |
-| Tone | Calm, editorial, indie-dev |
-| Density | Comfortable (4px base grid) |
-| Accent | None — pure monochrome |
+| Tone | Calm, editorial, premium |
+| Density | Comfortable (8px base grid) |
+| Accent | `#0071e3` Apple Blue — used sparingly (links, active states, CTA) |
 | Motion | Subtle (≤150ms ease-out) |
-| Borders | 1px solid #e5e5e5 (gray-200) |
-| Shadows | None — borders only |
-| Icons | `lucide-react` (stroke 1.5, color currentColor) |
+| Border | Hairline `#d2d2d7` on Apple `#f5f5f7` muted sections |
+| Shadows | Shadow-as-border: `0 0 0 1px rgba(0,0,0,0.08)` + ambient lift |
+| Icons | `lucide-react` (stroke 1.75, color `currentColor`) |
 | Emoji | None in UI |
-| Imagery | Real project screenshots, no stock photos |
+| Imagery | Project cover art (CSS-generated monograms), real screenshots for finished projects |
 
 ## 2. Color palette
 
-Pure monochrome, Tailwind defaults + 2 custom shades:
+Apple DNA + single blue accent:
 
-| Token | Hex | Tailwind | Use |
-|---|---|---|---|
-| `bg` | `#ffffff` | `white` | Page background, card background |
-| `bg-muted` | `#fafafa` | `gray-50` | Subtle section background, hover bg |
-| `bg-hover` | `#f5f5f5` | `gray-100` | Interactive hover (cards, buttons) |
-| `text` | `#0a0a0a` | `gray-950` | Headings, body |
-| `text-muted` | `#525252` | `gray-600` | Captions, secondary info |
-| `text-subtle` | `#a3a3a3` | `gray-400` | Disabled, placeholder |
-| `border` | `#e5e5e5` | `gray-200` | Card border, divider |
-| `border-strong` | `#d4d4d4` | `gray-300` | Input border, focus ring fallback |
+| Token | Hex | Use |
+|---|---|---|
+| `bg` | `#ffffff` | Page background, card backgrounds |
+| `bg-muted` | `#f5f5f7` | Hero section, sidebar, hover bg, muted areas |
+| `bg-section` | `#fbfbfd` | Subtle section differentiation |
+| `bg-elevated` | `#ffffff` | Card on `#f5f5f7` |
+| `bg-hover` | `#f5f5f7` | Interactive hover (cards, buttons) |
+| `text` | `#1d1d1f` | Primary text, headings |
+| `text-2` | `#424245` | Secondary text, body copy |
+| `text-muted` | `#6e6e73` | Captions, tertiary info |
+| `text-subtle` | `#86868b` | Placeholder, disabled |
+| `border` | `#d2d2d7` | Hairline dividers, card borders |
+| `border-strong` | `#a1a1a6` | Input focus, strong dividers |
+| `border-light` | `#e5e7eb` | Vercel-style light ring on pills |
+| `accent` | `#0071e3` | Apple Blue — links, active states, CTA pills |
+| `accent-hover` | `#0077ed` | Hover state for accent |
+| `accent-soft` | `#2997ff` | Accent on dark bg |
 
-**No** accent color. **No** red for errors (use bold + icon). **No** blue for links (use underline + currentColor).
+**Rule**: accent `#0071e3` used only for: links, active filter pills, active nav, heart icon fill, primary CTA. Nowhere else.
 
 ## 3. Typography
 
-| Use | Font | Size | Weight | Tracking |
-|---|---|---|---|---|
-| Display (page title) | Inter | 32px / `text-3xl` | 700 | -0.02em |
-| H2 (section) | Inter | 24px / `text-2xl` | 600 | -0.01em |
-| H3 (card title) | Inter | 18px / `text-lg` | 600 | normal |
-| Body | Inter | 16px / `text-base` | 400 | normal |
-| Caption | Inter | 14px / `text-sm` | 400 | normal |
-| **Mono** (tech tags, code) | JetBrains Mono | 12px / `text-xs` | 500 | 0.05em, uppercase for tags |
-| Button | Inter | 14px / `text-sm` | 500 | normal |
-
-Fonts loaded via `next/font/google` (no FOUT, no extra request).
+**Font**: Geist (via `next/font/google`) — geometric, Vercel's own typeface. Variable font, zero FOUT.
 
 ```ts
 // app/layout.tsx
-import { Inter, JetBrains_Mono } from 'next/font/google'
-
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
-const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono' })
+import { Geist, Geist_Mono } from 'next/font/google'
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans', display: 'swap' })
+const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' })
 ```
+
+**Tracking scale** (Vercel token discipline — aggressive negative at display sizes):
+
+| Level | CSS var | Tracking | Size range | Weight | Use |
+|---|---|---|---|---|---|
+| Display | `--tracking-display` | -0.05em | 56-64px | 600 | Hero billboard |
+| Heading | `--tracking-heading` | -0.03em | 28-40px | 600 | Section heads, H2 |
+| Title | `--tracking-title` | -0.022em | 18-28px | 600 | Card titles |
+| Body | `--tracking-body` | -0.011em | 15-17px | 400 | Paragraphs |
+| Small | `--tracking-small` | -0.006em | 12-13px | 400-500 | Labels, captions |
+| Eyebrow | (0.06em) | +0.06em | 12px | 600 | Section labels, uppercase |
+
+Global: `font-feature-settings: 'liga' 1, 'tnum' 1` — ligatures + tabular nums on all text.
 
 ## 4. Spacing scale
 
-4px base grid, used as Tailwind defaults (`p-2` = 8px, `p-4` = 16px, etc.).
+8px base grid (Vercel standard):
 
 | Token | px | Use |
 |---|---|---|
-| `space-1` | 4 | Tight inline gap (icon + label) |
-| `space-2` | 8 | Small padding, tag gap |
-| `space-3` | 12 | Card internal padding (mobile) |
-| `space-4` | 16 | Card internal padding (desktop), form field gap |
-| `space-6` | 24 | Section gap (between feed cards vertically) |
-| `space-8` | 32 | Page section padding |
-| `space-12` | 48 | Major section break |
-| `space-16` | 64 | Above-the-fold hero padding |
+| `gap-1` | 4px | Tight inline gap (icon + label) |
+| `gap-2` | 8px | Small padding, tag gap |
+| `gap-2.5` | 10px | Vercel card gap |
+| `gap-3` | 12px | Card internal padding (mobile) |
+| `gap-4` | 16px | Card internal padding (desktop), form gap |
+| `gap-5` | 20px | Section internal |
+| `gap-6` | 24px | Section gap (between feed cards) |
+| `gap-8` | 32px | Page section padding |
+| `gap-10` | 40px | Desktop sidebar gap |
+| `gap-12` | 48px | Major section break |
+| `gap-16` | 64px | Above-the-fold hero padding (desktop) |
+
+**Rule**: use multiples of 8. No arbitrary values like 13px or 17px.
 
 ## 5. Border radius
 
-Sharp by default, 2px for inputs/buttons, 4px for cards.
-
 | Token | Value | Use |
 |---|---|---|
-| `rounded-none` | 0 | Tag chips, full-width banners |
-| `rounded-sm` | 2px | Buttons, inputs |
-| `rounded` | 4px | Cards, modals |
-| `rounded-full` | 9999px | Avatar, pill buttons |
+| `rounded-sm` | 4px | Buttons, inputs |
+| `rounded` | 8px | Cards, modals |
+| `rounded-md` | 12px | Large cards, panels |
+| `rounded-lg` | 18px | Panels with padding |
+| `rounded-pill` | 980px | Pills, story circles |
+| `rounded-full` | 9999px | Avatar, full circles |
 
-## 6. Components
+## 6. Shadow system
 
-### 6.1 Project card (public feed)
+**Shadow-as-border** (Vercel signature pattern — looks like a border, lifts off page):
 
-```
-┌─────────────────────────────────┐
-│                                 │
-│         [Cover image]           │  ← aspect ratio varies (masonry)
-│                                 │
-├─────────────────────────────────┤
-│ Project Title                   │  ← h3, 18px, semibold
-│ #tag1 #tag2 #tag3               │  ← mono, uppercase, gray-600
-│                                 │
-│ ❤ 24                            │  ← heart icon + count, gray-950
-└─────────────────────────────────┘
-```
+```css
+/* Single ring: feels like a 1px border, not a shadow */
+--shadow-ring: 0 0 0 1px rgba(0,0,0,0.08);
+--shadow-ring-strong: 0 0 0 1px rgba(0,0,0,0.12);
+--shadow-ring-light: 0 0 0 1px rgba(0,0,0,0.05);
 
-- **Width**: column width (1/3 desktop, 1/2 tablet, full mobile)
-- **Image**: rounded-none (sharp corners, no rounding inside masonry)
-- **Border**: 1px solid `border`, only visible on hover
-- **Hover**: `bg-muted` background on whole card, image scale 1.02 (150ms)
-- **Tags**: max 4 visible, +N if more
-- **Like count**: bottom-right of metadata row
+/* Card shadow: ring + subtle ambient lift */
+--shadow-card: 0 0 0 1px rgba(0,0,0,0.08), 0 2px 2px rgba(0,0,0,0.04);
+--shadow-card-hover: 0 0 0 1px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.08);
 
-### 6.2 Tech tag chip
-
-```
-┌────────┐
-│ NEXTJS │   ← mono, 12px, uppercase, 0.05em tracking
-└────────┘
+/* Focus ring */
+--shadow-focus: 0 0 0 2px var(--bg), 0 0 0 4px hsla(212, 100%, 48%, 0.5);
 ```
 
-- `bg-muted` background
-- `text` (black) text
-- `rounded-none` (sharp)
-- Padding: `px-2 py-1`
-- No border
+Applied via utility classes:
+```html
+<div class="shadow-vc">card with ring + ambient</div>
+<div class="shadow-vc-hover hover:shadow-vc-hover">card hover</div>
+<div class="focus-ring focus-ring:focus-visible">focusable</div>
+```
 
-### 6.3 Button
-
-**Primary** (CTA, save):
-- `bg` (white) background
-- `border` (1px gray-200)
-- `text` (black)
-- Hover: `bg-hover` (gray-100)
-- Padding: `px-4 py-2`, `rounded-sm`
-
-**Ghost** (cancel, secondary):
-- `bg` transparent
-- No border
-- `text` (black)
-- Hover: `bg-hover`
-
-**Destructive** (delete):
-- Same as primary, but `text` is still black — we don't use red
-- Confirmation modal required for any destructive action
-
-### 6.4 Input
-
-- `bg` (white)
-- `border` (1px gray-300)
-- `text` (black) text
-- Placeholder: `text-subtle` (gray-400)
-- Focus: `border-strong` (gray-500) + 2px ring offset
-- Padding: `px-3 py-2`, `rounded-sm`
-- Height: 40px (single line), auto (textarea)
-
-### 6.5 Modal (admin)
-
-- Centered, max-width 500px
-- White background, 1px border
-- `rounded` (4px)
-- Backdrop: 50% black
-- Animation: fade in 150ms ease-out
-- ESC to close
-- Focus trap inside
+**Old pattern to remove**: `shadow-apple-card` (4-layer Apple shadow) — replaced with shadow-as-border in Vercel polish.
 
 ## 7. Layout
 
 ### 7.1 Feed (`/`)
 
+**Desktop (lg+)**: 3-column grid, 12-col CSS Grid
 ```
-[Top nav: logo · filter chips · (admin link if cookie)]
-
-  ┌──────┐ ┌──────┐ ┌──────┐
-  │ card │ │ card │ │ card │   ← 3 col desktop
-  └──────┘ └──────┘ └──────┘
-  ┌──────┐ ┌──────┐ ┌──────┐
-  │ card │ │ card │ │ card │   ← masonry, varying heights
-  └──────┘ └──────┘ └──────┘
-
-[Footer: © lenn0109 · GitHub · LinkedIn]
+┌────────────┬──────────────────────────────┬─────────────────┐
+│ Left Nav   │ Main Feed                    │ Right Sidebar   │
+│ col-span-2 │ col-span-7                  │ col-span-3      │
+│ sticky     │                              │ sticky          │
+│            │ [stories]                   │ [Profile Card]  │
+│ LennGram   │ [filter pills]              │ lenn0109        │
+│ Home       │ [ProjectCard × N]           │ 5 projects      │
+│ Liked      │ [Suggestions]               │ View profile    │
+│ Saved      │                              │ [Quick Links]   │
+│ Profile    │                              │ GitHub          │
+│ Admin      │                              │ Email           │
+└────────────┴──────────────────────────────┴─────────────────┘
 ```
 
-- Container: `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8`
-- Masonry via CSS columns (`columns-1 sm:columns-2 lg:columns-3 gap-4`)
-- Each card must be `break-inside-avoid`
+**Tablet (sm-md)**: 2-column, no sidebars (hide left+right)
+
+**Mobile (default)**: single column, bottom nav (Home/Liked/Saved/You), no sidebars
+
+Container: `max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8`
 
 ### 7.2 Project detail (`/p/[slug]`)
 
 ```
-[Top nav]
-
-  ┌────────────┐  Project Title
-  │            │  ──────────────
-  │   Cover    │  Description markdown
-  │   image    │  rendered here
-  │   (sticky) │
-  │            │  #tag1 #tag2 #tag3
-  │            │  [Visit repo] [View demo] ❤ 24
-  └────────────┘
-
-[Footer]
+Desktop:  [sticky cover 5/12]  |  [content 7/12]
+Mobile:   [cover full-width]   →  [content]
 ```
 
-- Desktop: 2-col, cover sticky left (col-span-1)
-- Mobile: 1-col, cover full-width on top
+### 7.3 /you profile page
 
-### 7.3 Admin (`/admin`)
+Single column. Hero section (avatar + "lenn0109" at 64px display) → PreviewStrip thumbnail grids (Liked + Saved sections).
+
+### 7.4 Admin (`/admin`)
+
+Single column table layout. No sidebar.
+
+## 8. Components
+
+### 8.1 ProjectCard (feed)
 
 ```
-[Top bar: lenngram / admin · Logout]
-
-  ┌────────────────────────────────────┐
-  │ Projects              [+ New]      │
-  │ ─────────────────────────────────  │
-  │ ▢ [thumb] Title · status · stats   │
-  │ ▢ [thumb] Title · status · stats   │
-  │ ▢ [thumb] Title · status · stats   │
-  │ [Load more]                        │
-  └────────────────────────────────────┘
+┌──────────────────────────────────┐
+│ [story circle]  lenn0109  1d   │ ← header: avatar + name + time
+│──────────────────────────────────│
+│                                  │
+│         [Cover art]              │ ← aspect-[4/5], monogram initials
+│         ★ Featured               │ ← if featured, top-left pill
+│                                  │
+│──────────────────────────────────│
+│  ♡ 24   💬   →                  │ ← action bar: like + comment + share
+│──────────────────────────────────│
+│  LennMusic                       │ ← title (H3)
+│  Next.js · PostgreSQL            │ ← tech pills
+└──────────────────────────────────┘
 ```
 
-- Table layout (not card grid) — denser for admin
-- Each row: 60px cover thumb, title, status badge, like count, updated_at, edit/delete actions
+- Width: full column width
+- Border: `shadow-vc` (ring) on hover
+- Hover: `shadow-vc-hover` + `translateY(-1px)`
+- Image: `aspect-[4/5]` with CoverArt monogram (CSS-generated, no images needed)
 
-### 7.4 Admin form (`/admin/new`, `/admin/[id]`)
+### 8.2 CoverArt (project cover)
 
-- 2-col form: labels left (1/3), inputs right (2/3)
-- Cover upload: drop zone, preview, remove
-- Tech tags: tag input (comma → enter)
-- Action bar: [Cancel] [Save draft] [Publish] (right-aligned)
-- Sticky action bar at bottom (always visible on long form)
+CSS-generated monogram cover — no image upload needed for MVP:
 
-## 8. Motion
+```tsx
+<span style={{
+  color: field.mark,         // per-project color from palette
+  fontSize: 'clamp(120px, 28vw, 200px)',
+  letterSpacing: '-0.05em',
+  lineHeight: 1,
+}}>
+  {project.title[0].toUpperCase()}
+</span>
+```
 
-| Interaction | Duration | Easing | Property |
+Palette: 8 colors per `pickField()` — each project gets a consistent color based on title hash.
+
+### 8.3 Filter pills
+
+- Inactive: `bg-bg shadow-vc hover:shadow-vc-hover`
+- Active: `bg-accent text-bg font-semibold shadow-vc`
+- Height: 28px (h-7), padding: `px-3`
+- Font: 12px, `tracking-tight`
+
+### 8.4 StoryStrip
+
+Circular avatars (60×60px) for each project. Gradient ring for unseen (`bg-gradient-to-br from-blue to-purple`), flat gray for seen. `rounded-full`.
+
+### 8.5 BottomNav (mobile only)
+
+Fixed bottom bar, 4 items: Home / Liked / Saved / You. Active = filled icon + 2px Apple Blue top bar.
+
+### 8.6 ProfileCard (right sidebar desktop)
+
+- `rounded-xl bg-bg-muted border border-border p-4`
+- Avatar + name + email
+- Stats: N projects, N total likes (tabular nums)
+- "View profile" CTA button
+
+### 8.7 NavLinks (left sidebar desktop)
+
+Vertical nav: LennGram logo, Home/Liked/Saved/Profile, Admin (separated by hairline). `sticky top-20`.
+
+## 9. Motion
+
+| Token | Duration | Easing | Property |
 |---|---|---|---|
-| Card hover | 150ms | ease-out | bg color, image scale |
-| Button hover | 100ms | ease-out | bg color |
-| Link hover | 0ms | — | underline appears instantly |
-| Modal open | 150ms | ease-out | opacity + scale 0.95→1 |
-| Modal close | 100ms | ease-in | opacity + scale 1→0.95 |
-| Like button | 200ms | ease-out | scale 1→1.2→1 (heart) |
-| Page transition | 0ms | — | None (RSC, instant) |
+| `motion-fast` | 100ms | `ease-out` | bg color, border |
+| `motion-base` | 150ms | `ease-out` | transform, opacity, color |
+| `motion-slow` | 320ms | `cubic-bezier(0.16, 1, 0.3, 1)` | page-level fade |
 
-**No** spring physics, no bounce, no staggered reveals, no parallax. Calm.
+- No bounce, no spring, no parallax, no stagger
+- `prefers-reduced-motion` respected via CSS media query
 
-## 9. Anti-patterns (avoid in code review)
+## 10. Anti-patterns (avoid in code review)
 
-- ❌ `shadow-md`, `shadow-lg` — no shadow allowed
-- ❌ `bg-blue-500` or any non-gray color — monochrome only
-- ❌ `text-white` on `bg-gray-50` — keep contrast within grayscale
-- ❌ `transition-all` — be specific (`transition-colors`, `transition-transform`)
-- ❌ Emoji in copy (`🚀`, `✨`, `💡`) — none
-- ❌ `rounded-2xl` or higher — keep ≤4px
-- ❌ `animate-pulse` on cards — distracting
 - ❌ `bg-gradient-*` — no gradients
-- ❌ Icon with fill — use stroke only (lucide stroke=1.5)
+- ❌ `shadow-apple-card` / `shadow-apple-hover` — use `shadow-vc` / `shadow-vc-hover`
+- ❌ `shadow-lg shadow-xl` — use shadow-as-border tokens
+- ❌ `font-bold` (700) — use `font-semibold` (600 max)
+- ❌ `font-display` — use `font-sans` + `tracking-*` tokens
+- ❌ `transition-all` — be specific
+- ❌ Emoji in copy (`🚀`, `✨`) — none
+- ❌ `rounded-2xl` or higher on cards — keep ≤18px
+- ❌ `animate-pulse` on cards — distracting
+- ❌ `bg-blue-*` or `text-blue-*` for non-accent elements
+- ❌ Icon with fill — use stroke only (lucide stroke=1.75)
 
-## 10. Reference (for design language, not to copy)
+## 11. Reference design systems
 
 Studied but not duplicated:
-- **PayBox** (`Lenn0109/Site01_PayOx`) — design system extraction methodology
-- **Linear** — density, monochrome, mono tags
-- **Vercel** — clean editorial, restrained color
+- **Apple** — color palette (`#f5f5f7`, `#0071e3`), hairline borders, display typography rhythm
+- **Vercel** — shadow-as-border, Geist font, compressed tracking scale, 8px grid, 3-weight type system
 - **Stripe Press** — magazine-like typography
-- **Geist UI** — minimal sans + mono pairing
 - **shadcn/ui** — primitive components (handmade copies, not library)

@@ -17,9 +17,7 @@
 |---|---|---|---|
 | `motion-fast` | 100ms | `ease-out` | bg color, border |
 | `motion-base` | 150ms | `ease-out` | transform, opacity, color |
-| `motion-slow` | 200ms | `ease-out` | scale (like button) |
-
-## Tailwind config
+| `motion-slow` | 320ms | `cubic-bezier(0.16, 1, 0.3, 1)` | page-level fade |
 
 ```ts
 // tailwind.config.ts
@@ -28,212 +26,83 @@ theme: {
     transitionDuration: {
       'fast': '100ms',
       'base': '150ms',
-      'slow': '200ms',
+      'slow': '320ms',
     },
     transitionTimingFunction: {
+      'apple': 'cubic-bezier(0.16, 1, 0.3, 1)',
       'out-quart': 'cubic-bezier(0.25, 1, 0.5, 1)',
     },
   },
 }
 ```
 
-Usage: `transition-colors duration-fast ease-out`, `transition-transform duration-base ease-out`.
-
 ## Per-component motion
 
-### Project card hover (feed)
+### ProjectCard hover
 
 ```css
 /* default */
 .card {
   background: var(--bg);
-  border: 1px solid transparent;
+  box-shadow: none; /* or shadow-vc for cards with ring */
 }
-.card img {
-  transform: scale(1);
-  transition: transform 150ms ease-out;
-}
-
 /* hover */
 .card:hover {
-  background: var(--bg-muted);
-  border-color: var(--border);
-}
-.card:hover img {
-  transform: scale(1.02);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-1px);
+  transition: box-shadow 150ms ease-out, transform 150ms ease-out;
 }
 ```
-
-**Rationale**: subtle image zoom + bg change signals interactivity without being noisy.
 
 ### Like button click
 
 ```tsx
-'use client'
-import { useState } from 'react'
-import { Heart } from 'lucide-react'
-
-export function LikeButton({ initialCount }: { initialCount: number }) {
-  const [count, setCount] = useState(initialCount)
-  const [liked, setLiked] = useState(false)
-  const [animating, setAnimating] = useState(false)
-
-  async function handleLike() {
-    setAnimating(true)
-    setLiked(!liked)
-    setCount(liked ? count - 1 : count + 1)
-    setTimeout(() => setAnimating(false), 200)
-    // POST /api/like
-  }
-
-  return (
-    <button
-      onClick={handleLike}
-      className={`
-        flex items-center gap-1 px-3 py-1.5 rounded-sm
-        border border-gray-200
-        hover:bg-gray-50
-        transition-colors duration-fast ease-out
-      `}
-    >
-      <Heart
-        className={`
-          w-4 h-4
-          transition-transform duration-slow ease-out
-          ${animating ? 'scale-125' : 'scale-100'}
-          ${liked ? 'fill-current' : 'fill-none'}
-        `}
-        strokeWidth={1.5}
-      />
-      <span className="text-sm tabular-nums">{count}</span>
-    </button>
-  )
-}
+<Heart
+  className={`
+    w-5 h-5
+    transition-transform duration-slow ease-out
+    ${animating ? 'scale-125' : 'scale-100'}
+    ${liked ? 'fill-accent text-accent' : 'fill-none text-text'}
+  `}
+  strokeWidth={1.75}
+/>
 ```
 
-**Rationale**: scale bump gives feedback but is short (200ms). Optimistic UI updates state immediately; rollback on API error.
+Scale bump (1→1.25→1) over 320ms gives feedback without being playful.
 
-### Modal open/close (admin confirmations)
+### Filter pill selection
 
-```tsx
-'use client'
-import { useEffect, useRef } from 'react'
+Instant state change — no animation. Binary selection, no need to highlight transition.
 
-export function Modal({ open, onClose, children }: ...) {
-  const dialogRef = useRef<HTMLDialogElement>(null)
-
-  useEffect(() => {
-    const dialog = dialogRef.current
-    if (!dialog) return
-    if (open && !dialog.open) dialog.showModal()
-    if (!open && dialog.open) dialog.close()
-  }, [open])
-
-  return (
-    <dialog
-      ref={dialogRef}
-      onClose={onClose}
-      className="
-        backdrop:bg-black/50
-        bg-white
-        border border-gray-200
-        rounded
-        p-0
-        max-w-md w-full
-        open:animate-fadeIn
-      "
-    >
-      {children}
-    </dialog>
-  )
-}
-```
+### Page-level fade
 
 ```css
-/* globals.css */
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-.animate-fadeIn { animation: fadeIn 150ms ease-out; }
+.animate-fadeIn {
+  animation: fadeIn 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
 ```
 
-**Rationale**: native `<dialog>` element handles focus trap + ESC. CSS animation on `open` state.
+### Modal (admin confirmations)
 
-### Filter chip selection (feed)
-
-No animation — instant state change. Selection is binary, no need to highlight transition.
+Uses native `<dialog>` element with CSS fade:
 
 ```tsx
-<button
-  className={`
-    px-3 py-1 rounded-sm
-    text-xs font-mono uppercase tracking-wider
-    border
-    ${selected
-      ? 'bg-gray-950 text-white border-gray-950'
-      : 'bg-white text-gray-950 border-gray-200 hover:bg-gray-50'
-    }
-    transition-colors duration-fast ease-out
-  `}
+<dialog
+  ref={dialogRef}
+  className="bg-bg border border-border rounded-lg p-0 max-w-md w-full"
 >
-  {tag}
-</button>
-```
+  {/* content */}
+</dialog>
 
-### Image upload preview (admin form)
-
-```tsx
-'use client'
-import { useState } from 'react'
-import Image from 'next/image'
-
-export function CoverUpload({ value, onChange }: ...) {
-  const [uploading, setUploading] = useState(false)
-  const [preview, setPreview] = useState(value)
-
-  async function handleFile(file: File) {
-    setUploading(true)
-    const form = new FormData()
-    form.append('file', file)
-    const res = await fetch('/api/admin/upload', { method: 'POST', body: form })
-    const { url } = await res.json()
-    setPreview(url)
-    onChange(url)
-    setUploading(false)
-  }
-
-  return (
-    <div className="border border-dashed border-gray-300 rounded p-6 text-center">
-      {preview ? (
-        <div className="relative aspect-video">
-          <Image src={preview} alt="Cover preview" fill className="object-cover" />
-          <button
-            onClick={() => { setPreview(null); onChange(null) }}
-            className="absolute top-2 right-2 px-2 py-1 bg-white border border-gray-200 rounded-sm text-xs"
-          >
-            Remove
-          </button>
-        </div>
-      ) : (
-        <label className="cursor-pointer">
-          <input
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            className="hidden"
-            onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
-          />
-          <span className="text-sm text-gray-600">
-            {uploading ? 'Uploading…' : 'Drop image or click to upload'}
-          </span>
-        </label>
-      )}
-    </div>
-  )
+/* CSS */
+dialog[open] {
+  animation: fadeIn 150ms ease-out;
 }
 ```
-
-**Rationale**: simple preview + remove. No crop UI for MVP (post-processing can be done in image editor before upload).
 
 ## What we DON'T do
 
@@ -258,6 +127,7 @@ export function CoverUpload({ value, onChange }: ...) {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 ```

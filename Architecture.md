@@ -8,38 +8,37 @@
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │                        Vercel (Edge CDN)                         │
-│  ┌──────────────────────────────────────────────────────────┐    │
-│  │           Next.js 15 App Router (single app)             │    │
-│  │                                                          │    │
-│  │  ┌──────────┐   ┌──────────┐   ┌──────────────────┐      │    │
-│  │  │ /  (RSC) │   │ /p/[slug]│   │ /admin/* (cookie)│      │    │
-│  │  │ Feed     │   │ Detail   │   │ Dashboard        │      │    │
-│  │  │ (anon)   │   │ (anon)   │   │ (service_role)   │      │    │
-│  │  └────┬─────┘   └────┬─────┘   └────────┬─────────┘      │    │
-│  │       │              │                   │                │    │
-│  │       │              │           ┌───────▼──────┐         │    │
-│  │       │              │           │  middleware  │         │    │
-│  │       │              │           │ cookie check │         │    │
-│  │       │              │           └───────┬──────┘         │    │
-│  │       │              │                   │                │    │
-│  │       ▼              ▼                   ▼                │    │
-│  │  ┌──────────────────────────────────────────────┐         │    │
-│  │  │         /api/like  /api/view  /api/admin/*   │         │    │
-│  │  │         (route handlers, edge runtime)        │         │    │
-│  │  └──────────────────────┬───────────────────────┘         │    │
-│  └─────────────────────────┼─────────────────────────────────┘    │
-└────────────────────────────┼──────────────────────────────────────┘
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │           Next.js 15 App Router (single app)             │   │
+│  │                                                          │   │
+│  │  ┌──────────┐   ┌──────────┐   ┌──────────────────┐   │   │
+│  │  │ / (RSC)  │   │ /p/[slug]│   │ /admin/* (cookie)│   │   │
+│  │  │ 3-col    │   │ Detail   │   │ Dashboard        │   │   │
+│  │  │ 12-col   │   │ (anon)   │   │ (service_role)  │   │   │
+│  │  └────┬─────┘   └────┬─────┘   └────────┬─────────┘   │   │
+│  │       │              │                   │               │   │
+│  │       │              │           ┌───────▼──────┐      │   │
+│  │       │              │           │  middleware   │      │   │
+│  │       │              │           │ cookie check  │      │   │
+│  │       │              │           └───────┬──────┘      │   │
+│  │       │              │                   │               │   │
+│  │       ▼              ▼                   ▼               │   │
+│  │  ┌──────────────────────────────────────────────┐      │   │
+│  │  │         /api/like  /api/view  /api/admin/* │      │   │
+│  │  └──────────────────────┬───────────────────────┘      │   │
+│  └─────────────────────────┼─────────────────────────────────┘   │
+└────────────────────────────┼────────────────────────────────────────┘
                              │ Supabase HTTP API
                              ▼
               ┌──────────────────────────────────┐
               │   Supabase (Singapore region)    │
               │                                  │
-              │   ┌────────────┐ ┌────────────┐  │
-              │   │ Postgres   │ │  Storage   │  │
-              │   │ 3 tables   │ │  covers/   │  │
-              │   │ RLS bypass │ │ public     │  │
-              │   │ via service│ │ bucket     │  │
-              │   └────────────┘ └────────────┘  │
+              │   ┌────────────┐ ┌────────────┐ │
+              │   │ Postgres   │ │  Storage   │ │
+              │   │ 3 tables  │ │  covers/   │ │
+              │   │ RLS bypass│ │ public     │ │
+              │   │ via service│ │ bucket     │ │
+              │   └────────────┘ └────────────┘ │
               └──────────────────────────────────┘
 ```
 
@@ -50,7 +49,8 @@
 | Edge CDN | Vercel | Vercel-managed |
 | Framework | Next.js 15.5.24 (App Router) | `app/` |
 | Rendering | Server Components (default) + Client Components (interactivity) | mixed |
-| Styling | Tailwind 3.4.17 + design tokens | `app/globals.css`, `tailwind.config.ts` |
+| Styling | Tailwind 3.4.17 + Apple DNA + Vercel tokens | `app/globals.css`, `tailwind.config.ts` |
+| Fonts | Geist (next/font/google) + Geist Mono | `app/layout.tsx` |
 | DB client | `@supabase/supabase-js` 2.49.4 + `@supabase/ssr` 0.6.1 | `lib/supabase/` |
 | Cookie session | httpOnly cookie + HMAC-SHA256 signature | `lib/auth.ts` |
 | IP hashing | `node:crypto` sha256 with `LIKES_SALT` env | `lib/ip-hash.ts` |
@@ -58,31 +58,30 @@
 
 ## Data flow
 
-### 4.1 Public visitor → Feed
+### Public visitor → Feed
 
 ```
 [Visitor browser]
   GET /
     ↓ (Vercel edge cache, if configured)
-[Next.js server component]
+[RSC: server fetch feed]
   createBrowserClient(URL, ANON_KEY)  ← reads NEXT_PUBLIC_*
     ↓
   supabase.from('projects')
-    .select('*')
+    .select('*, project_likes(count)')
     .eq('status', 'published')
     .order('featured', desc)
     .order('display_order', asc)
     .order('created_at', desc)
-    .range(0, 11)
     ↓
 [Supabase Postgres] (anon key, RLS enforces status='published')
     ↓
-[Next.js renders <ProjectCard /> for each]
-    ↓
+[RSC renders 3-col grid layout with sidebars]
+  ↓
 HTML to browser
 ```
 
-### 4.2 Visitor → Like
+### Visitor → Like
 
 ```
 [Visitor clicks heart on card]
@@ -106,7 +105,7 @@ HTML to browser
 [Browser optimistic UI: heart fills, count increments]
 ```
 
-### 4.3 Visitor → Project detail
+### Visitor → Project detail
 
 ```
 GET /p/[slug]
@@ -114,8 +113,8 @@ GET /p/[slug]
 [RSC: server fetch project by slug]
   supabase.from('projects').select('*').eq('slug', params.slug).single()
     ↓
-[RSC: render <ProjectDetail /> with markdown + sticky cover]
-    ↓
+[RSC: render detail page with sticky cover + markdown + comments]
+  ↓
 [Client component: <ViewTracker projectId={...} />]
   useEffect(() => {
     fetch('/api/view', { method: 'POST', body: { projectId } })
@@ -128,7 +127,7 @@ GET /p/[slug]
 200 OK (no body needed)
 ```
 
-### 4.4 Admin login
+### Admin login
 
 ```
 [Owner types password at /admin/login]
@@ -148,7 +147,7 @@ GET /p/[slug]
   200 OK → redirect to /admin
 ```
 
-### 4.5 Admin → CRUD project
+### Admin → CRUD project
 
 ```
 GET /admin
@@ -175,7 +174,7 @@ POST /api/admin/projects  (create or update)
 [Browser redirect to /admin or toast]
 ```
 
-### 4.6 Admin → Image upload
+### Admin → Image upload
 
 ```
 [Owner selects file in form]
@@ -249,7 +248,7 @@ git push origin main
   → if main branch: assign production URL
   → set env vars from Vercel dashboard (not from .env)
   ↓
-[Live at lenngram.vercel.app]
+[Live at lenngram.vercel.app or custom domain]
 ```
 
 ## Performance budget
@@ -265,8 +264,8 @@ git push origin main
 | Failure | User-visible | Server behavior |
 |---|---|---|
 | Supabase down | Feed shows error state, link to retry | API returns 503 |
-| Storage down | Cover images broken, fallback to OG default | /api/admin/upload returns 503 |
+| Storage down | Cover images broken, fallback to OG default | `/api/admin/upload` returns 503 |
 | Vercel deploy fail | Site unchanged from last successful deploy | Vercel rolls back automatically |
 | IP rate limit exceeded | Like button shows "try again later" | 429 with Retry-After header |
 | Admin password wrong | Login form shows "invalid password" | 401, no hint (no enumeration) |
-| Admin cookie expired | Redirect to /admin/login | 302 to login |
+| Admin cookie expired | Redirect to `/admin/login` | 302 to login |

@@ -19,13 +19,13 @@ feed. Single owner (lenn0109), public visitors. No user accounts.
 ```
 LennGram/                       ← repo root = Next.js project root
 ├── app/                        ← App Router
-│   ├── page.tsx                ← Public feed
-│   ├── p/[slug]/page.tsx       ← Project detail
+│   ├── page.tsx                ← Public feed (3-col desktop, single mobile)
+│   ├── p/[slug]/page.tsx     ← Project detail
 │   ├── admin/                  ← Owner dashboard
 │   │   ├── login/page.tsx
 │   │   ├── page.tsx            ← List projects
 │   │   ├── new/page.tsx
-│   │   └── [id]/page.tsx       ← Edit
+│   │   └── [id]/page.tsx      ← Edit
 │   ├── api/                    ← API routes
 │   │   ├── like/route.ts
 │   │   └── view/route.ts
@@ -47,23 +47,38 @@ LennGram/                       ← repo root = Next.js project root
 ├── public/                     ← Static assets
 ├── supabase/
 │   └── schema.sql              ← DB schema (idempotent)
-├── docs/                       ← Design + animation references
+├── Animation.md
+├── Architecture.md
+├── Design.md
+├── PRD.md
+├── progress.md
+├── README.md
 ├── middleware.ts               ← /admin route protection
 ├── next.config.mjs
 ├── tailwind.config.ts
 ├── tsconfig.json
-├── package.json
-└── progress.md
+└── package.json
 ```
 
-## Visual contract (since 2026-09-05)
+## Visual contract (Apple DNA + Vercel tokens, since 2026-09-06)
 
-- **Theme**: **monochrome light only** — white background, black text, gray borders. No accent color. No gradient. No shadow.
-- **Layout**: masonry 3-col desktop / 2-col tablet / 1-col mobile
-- **Typography**: sans primary (Inter), mono secondary (JetBrains Mono) for tech tags
-- **Motion**: subtle — 150ms ease-out hover, no bounce, no spring
+- **Theme**: Light only — Apple `#f5f5f7` muted sections, `#0071e3` single blue accent
+- **Layout**: 3-col desktop (left nav 2/12, feed 7/12, right sidebar 3/12) / single col mobile
+- **Typography**: Geist (via next/font/google) — compressed tracking scale, tabular nums
+- **Cards**: Shadow-as-border (`0 0 0 1px rgba(0,0,0,0.08)`) + subtle ambient lift
+- **Motion**: ≤150ms ease-out, no bounce, no spring, no parallax
 - **No emoji**, no stock photos, no generic stock imagery
-- **No serif** (Victorian was discussed and rejected — too ornament)
+- **No serif**
+
+## Typography scale (Vercel token discipline)
+
+| Level | Class | Size | Tracking | Weight | Use |
+|-------|-------|------|----------|--------|-----|
+| Display | `tracking-display` | 64px | -0.05em | 600 | Hero billboard |
+| Heading | `tracking-heading` | 32px | -0.03em | 600 | Section heads |
+| Title | `tracking-title` | 20-28px | -0.022em | 600 | Card titles |
+| Body | `tracking-body` | 15-17px | -0.011em | 400 | Paragraphs |
+| Small | `tracking-small` | 12-13px | -0.006em | 400-500 | Labels, captions |
 
 ## Conventions
 
@@ -72,7 +87,7 @@ LennGram/                       ← repo root = Next.js project root
   - **NO Co-authored-by trailers** for AI agents (enforced by global git hook)
   - **Author**: only `lenn0109 <lennlynx91@gmail.com>`
 - **Branches**: `feat/<scope>`, `fix/<scope>`. Default branch: `main`.
-- **Update `progress.md`** after each phase.
+- **Update `progress.md`** after each milestone.
 
 ## Build constraints (t3.micro 1.9GB RAM)
 
@@ -99,18 +114,23 @@ const supabase = createServerClient(URL, SERVICE_KEY, { cookies })
 ## Key files priority
 
 1. `progress.md` — where we are now
-2. `Architecture.md` — how it fits together
-3. `Schema.md` — DB schema + RLS
-4. `Design.md` — visual system
+2. `Design.md` — visual system + tokens
+3. `Architecture.md` — how it fits together
+4. `Schema.md` — DB schema + RLS
 5. `PRD.md` — features + scope
 6. `Animation.md` — motion specs
 7. `README.md` — onboarding
 
 ## Anti-patterns (avoid)
 
-- ❌ Accent color (gold, violet, blue) — monochrome only
-- ❌ Drop shadow on cards — use border + subtle gray hover bg
-- ❌ Emoji in UI (🛠️, ✨) — none
+- ❌ `bg-gradient-*` — no gradients
+- ❌ `shadow-lg shadow-xl` — use `shadow-vc` (shadow-as-border)
+- ❌ `font-bold` — use `font-semibold` (600 max; Vercel 3-weight rule)
+- ❌ `transition-all` — be specific (`transition-colors`, `transition-transform`)
+- ❌ Emoji in UI (🚀, ✨) — none
+- ❌ `rounded-2xl` or higher on cards — keep ≤lg (18px)
+- ❌ `animate-pulse` on cards — distracting
+- ❌ Icon with fill — use stroke only (lucide stroke=1.75)
 - ❌ Tailwind v4 — stay on v3.4.17 (lighter)
 - ❌ ORM (Prisma, Drizzle) — Supabase JS client + RLS is enough
 - ❌ Automated UI tools (template generators, low-effort design tools) — manual only
