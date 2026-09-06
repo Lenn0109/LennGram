@@ -6,6 +6,7 @@ export interface Project {
   title: string;
   description: string;
   cover_url: string | null;
+  images?: string[];
   repo_url: string | null;
   demo_url: string | null;
   tech_stack: string[];

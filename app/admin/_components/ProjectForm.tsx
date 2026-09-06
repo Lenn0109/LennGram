@@ -29,6 +29,7 @@ export function ProjectForm({ initial }: ProjectFormProps) {
   const [demoUrl, setDemoUrl] = useState(initial?.demo_url ?? '');
   const [tags, setTags] = useState<string[]>(initial?.tech_stack ?? []);
   const [tagDraft, setTagDraft] = useState('');
+  const [images, setImages] = useState<string[]>(initial?.images ?? []);
   const [status, setStatus] = useState<'draft' | 'published'>(
     initial?.status ?? 'draft',
   );
@@ -101,6 +102,7 @@ export function ProjectForm({ initial }: ProjectFormProps) {
       repo_url: repoUrl,
       demo_url: demoUrl,
       tech_stack: tags,
+      images,
       status,
       featured,
       display_order: displayOrder,
@@ -255,6 +257,45 @@ export function ProjectForm({ initial }: ProjectFormProps) {
             )}
           </div>
           {errors.cover_url && <p className="text-[12px] text-[#ff3b30] tracking-tight">{errors.cover_url}</p>}
+        </label>
+
+        <label className="block space-y-1.5">
+          <span className="text-[12px] font-semibold tracking-small uppercase text-text-muted">
+            Gallery <span className="normal-case font-normal text-text-subtle">— up to 5 images</span>
+          </span>
+          <div className="space-y-2">
+            {images.map((url, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <input
+                  type="url"
+                  value={url}
+                  onChange={(e) => {
+                    const next = [...images];
+                    next[i] = e.target.value;
+                    setImages(next);
+                  }}
+                  placeholder="https://..."
+                  className="flex-1 h-11 px-4 rounded-xl bg-bg text-[15px] tracking-tight text-text placeholder:text-text-subtle shadow-vc focus:outline-none focus:ring-2 focus:ring-accent/30 transition-shadow duration-base"
+                />
+                <button
+                  type="button"
+                  onClick={() => setImages(images.filter((_, j) => j !== i))}
+                  className="h-11 w-11 rounded-xl bg-bg-muted hover:bg-bg-hover flex items-center justify-center text-text-muted hover:text-text transition-colors"
+                >
+                  <X strokeWidth={1.5} className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+            {images.length < 5 && (
+              <button
+                type="button"
+                onClick={() => setImages([...images, ''])}
+                className="h-11 w-full rounded-xl border border-dashed border-border text-[13px] text-text-muted hover:text-text hover:border-border-strong transition-colors"
+              >
+                + Add image URL
+              </button>
+            )}
+          </div>
         </label>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

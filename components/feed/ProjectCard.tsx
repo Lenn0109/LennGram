@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { IGHeartOutline, IGComment, IGPaperPlane, IGSaveOutline, IGCheck } from '@/components/ui/IgIcons';
-import { CoverArt } from '@/components/feed/CoverArt';
+import { ImageCarousel } from '@/components/feed/ImageCarousel';
 import { useToast } from '@/components/ui/Toast';
 import { formatTechName, descriptionSnippet } from '@/lib/mock';
 import type { ProjectWithCount } from '@/lib/types';
@@ -249,16 +249,7 @@ export function ProjectCard({
         aria-label={`${project.title} cover`}
       >
         <div className="absolute inset-0 transition-transform duration-slow ease-apple group-hover:scale-[1.02]">
-          {project.cover_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={project.cover_url}
-              alt={project.title}
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-          ) : (
-            <CoverArt project={project} />
-          )}
+          <ImageCarousel images={project.images} project={project} />
         </div>
 
         {project.featured && (

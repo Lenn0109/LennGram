@@ -62,6 +62,7 @@ export async function PATCH(req: Request, ctx: Ctx) {
   }
   if (parsed.data.description !== undefined) update.description = parsed.data.description;
   if (parsed.data.cover_url !== undefined) update.cover_url = parsed.data.cover_url;
+  if (parsed.data.images !== undefined) update.images = parsed.data.images;
   if (parsed.data.repo_url !== undefined) update.repo_url = parsed.data.repo_url;
   if (parsed.data.demo_url !== undefined) update.demo_url = parsed.data.demo_url;
   if (parsed.data.tech_stack !== undefined) update.tech_stack = parsed.data.tech_stack;

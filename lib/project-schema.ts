@@ -44,6 +44,10 @@ export const projectFormSchema = z.object({
     .array(z.string().min(1))
     .max(10, 'Max 10 tags')
     .default([]),
+  images: z
+    .array(z.string().url('Must be a valid URL'))
+    .max(5, 'Max 5 gallery images')
+    .default([]),
   status: z.enum(['draft', 'published']).default('draft'),
   featured: z.boolean().default(false),
   display_order: z.number().int().default(0),

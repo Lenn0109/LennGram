@@ -57,6 +57,7 @@ export async function POST(req: Request) {
       title: parsed.data.title,
       description: parsed.data.description,
       cover_url: parsed.data.cover_url ?? null,
+      images: parsed.data.images,
       repo_url: parsed.data.repo_url ?? null,
       demo_url: parsed.data.demo_url ?? null,
       tech_stack: parsed.data.tech_stack,

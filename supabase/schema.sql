@@ -12,6 +12,7 @@ create table if not exists public.projects (
   title         text not null check (length(title) between 1 and 100),
   description   text not null check (length(description) between 1 and 10000),
   cover_url     text check (cover_url is null or cover_url ~* '^https?://'),
+  images        text[] not null default '{}' check (array_length(images, 1) <= 5),
   repo_url      text check (repo_url is null or repo_url ~* '^https?://'),
   demo_url      text check (demo_url is null or demo_url ~* '^https?://'),
   tech_stack    text[] not null default '{}' check (array_length(tech_stack, 1) <= 10),

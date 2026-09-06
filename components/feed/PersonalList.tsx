@@ -65,7 +65,8 @@ export function PersonalList({
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch('/api/projects', { cache: 'no-store' });
+        const idsParam = ids.length > 0 ? `ids=${ids.join(',')}` : '';
+        const res = await fetch(`/api/projects?${idsParam}`, { cache: 'no-store' });
         if (!res.ok) {
           if (!cancelled) setItems([]);
           return;
@@ -124,7 +125,7 @@ export function PersonalList({
   return (
     <main className="bg-bg">
       <header className="bg-bg-muted border-b border-border">
-        <div className="mx-auto max-w-feed sm:max-w-2xl px-4 sm:px-6 py-10 sm:py-14">
+        <div className="mx-auto max-w-[680px] px-4 sm:px-6 py-10 sm:py-14">
           <Link
             href="/"
             className="inline-flex items-center gap-1 text-[13px] text-text-muted hover:text-text transition-colors"
@@ -132,8 +133,8 @@ export function PersonalList({
             <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
             Back to projects
           </Link>
-          <p className="mt-4 text-eyebrow text-text-muted">{eyebrow}</p>
-          <h1 className="mt-2 font-display text-[32px] sm:text-[48px] text-text tracking-tightest">
+          <p className="mt-4 text-[12px] font-medium tracking-small uppercase text-text-muted">{eyebrow}</p>
+          <h1 className="mt-2 font-sans font-semibold text-[32px] sm:text-[48px] text-text tracking-display leading-[0.95]">
             {isLoading
               ? '…'
               : count === 0
@@ -154,7 +155,7 @@ export function PersonalList({
         </div>
       </header>
 
-      <div className="mx-auto max-w-feed sm:max-w-2xl">
+      <div className="mx-auto max-w-[680px]">
         {isLoading && (
           <div className="px-4 sm:px-5 py-20 text-center">
             <div className="inline-block h-5 w-5 rounded-full border-2 border-border border-t-accent animate-spin" />
