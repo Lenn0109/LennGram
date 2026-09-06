@@ -264,35 +264,63 @@ export function ProjectForm({ initial }: ProjectFormProps) {
             Gallery <span className="normal-case font-normal text-text-subtle">— up to 5 images</span>
           </span>
           <div className="space-y-2">
-            {images.map((url, i) => (
+            {images.filter(Boolean).map((url, i) => (
               <div key={i} className="flex items-center gap-2">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={url}
+                  alt={`Gallery ${i + 1}`}
+                  className="w-10 h-10 rounded-lg object-cover shadow-vc flex-shrink-0"
+                />
                 <input
                   type="url"
                   value={url}
                   onChange={(e) => {
-                    const next = [...images];
-                    next[i] = e.target.value;
-                    setImages(next);
+                    const filtered = images.filter(Boolean);
+                    filtered[i] = e.target.value;
+                    setImages(filtered);
                   }}
-                  placeholder="https://..."
+                  placeholder="https://... or upload above"
                   className="flex-1 h-11 px-4 rounded-xl bg-bg text-[15px] tracking-tight text-text placeholder:text-text-subtle shadow-vc focus:outline-none focus:ring-2 focus:ring-accent/30 transition-shadow duration-base"
                 />
+                <label className="h-11 w-11 rounded-xl bg-bg-muted hover:bg-bg-hover flex items-center justify-center cursor-pointer shrink-0 transition-colors">
+                  <Upload strokeWidth={1.5} className="h-4 w-4 text-text-muted" />
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const fd = new FormData();
+                      fd.append('file', file);
+                      try {
+                        const res = await fetch('/api/admin/upload', { method: 'POST', body: fd });
+                        if (!res.ok) return;
+                        const data = await res.json() as { url: string };
+                        const filtered = images.filter(Boolean);
+                        filtered[i] = data.url;
+                        setImages(filtered);
+                      } catch { /* upload failed, ignore */ }
+                    }}
+                  />
+                </label>
                 <button
                   type="button"
                   onClick={() => setImages(images.filter((_, j) => j !== i))}
-                  className="h-11 w-11 rounded-xl bg-bg-muted hover:bg-bg-hover flex items-center justify-center text-text-muted hover:text-text transition-colors"
+                  className="h-11 w-11 rounded-xl bg-bg-muted hover:bg-bg-hover flex items-center justify-center text-text-muted hover:text-text transition-colors shrink-0"
                 >
                   <X strokeWidth={1.5} className="h-4 w-4" />
                 </button>
               </div>
             ))}
-            {images.length < 5 && (
+            {images.filter(Boolean).length < 5 && (
               <button
                 type="button"
                 onClick={() => setImages([...images, ''])}
                 className="h-11 w-full rounded-xl border border-dashed border-border text-[13px] text-text-muted hover:text-text hover:border-border-strong transition-colors"
               >
-                + Add image URL
+                + Add image
               </button>
             )}
           </div>

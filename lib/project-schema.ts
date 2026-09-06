@@ -25,28 +25,28 @@ export const projectFormSchema = z.object({
     .url('Must be a valid URL')
     .or(z.literal(''))
     .optional()
-    .transform((v) => (v ? v : null)),
+    .transform((v) => (v === '' ? null : v)),
+  images: z
+    .array(z.string().trim())
+    .max(5, 'Max 5 gallery images')
+    .default([]),
   repo_url: z
     .string()
     .trim()
     .url('Must be a valid URL')
     .or(z.literal(''))
     .optional()
-    .transform((v) => (v ? v : null)),
+    .transform((v) => (v === '' ? null : v)),
   demo_url: z
     .string()
     .trim()
     .url('Must be a valid URL')
     .or(z.literal(''))
     .optional()
-    .transform((v) => (v ? v : null)),
+    .transform((v) => (v === '' ? null : v)),
   tech_stack: z
     .array(z.string().min(1))
     .max(10, 'Max 10 tags')
-    .default([]),
-  images: z
-    .array(z.string().url('Must be a valid URL'))
-    .max(5, 'Max 5 gallery images')
     .default([]),
   status: z.enum(['draft', 'published']).default('draft'),
   featured: z.boolean().default(false),
