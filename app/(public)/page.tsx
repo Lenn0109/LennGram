@@ -78,7 +78,6 @@ export default async function HomePage({ searchParams }: PageProps) {
                   <p className="text-[12px] text-text-muted tracking-tight truncate">lennlynx91@gmail.com</p>
                 </div>
               </div>
-              <p className="text-[13px] text-text-2 tracking-tight leading-relaxed">A small set of projects I&apos;ve built, shipped, and learned from.</p>
               <div className="flex gap-4 pt-1">
                 <div>
                   <p className="text-[14px] font-semibold tracking-tight text-text tabular-nums">{items.length}</p>
