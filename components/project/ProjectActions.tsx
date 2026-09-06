@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { IGHeartOutline, IGSaveOutline, IGPaperPlane } from '@/components/ui/IgIcons';
+import { IGHeartOutline, IGSaveOutline, IGPaperPlane, IGCheck } from '@/components/ui/IgIcons';
 import { useToast } from '@/components/ui/Toast';
 
 interface ProjectActionsProps {
@@ -45,6 +45,7 @@ export function ProjectActions({
   const [count, setCount] = useState(initialCount);
   const [saved, setSaved] = useState(false);
   const [pending, setPending] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setSaved(readSaved().has(projectId));
@@ -105,7 +106,9 @@ export function ProjectActions({
     }
     try {
       await navigator.clipboard.writeText(url);
-      show('Link copied', 'success');
+      setCopied(true);
+      show('Copied!', 'success');
+      setTimeout(() => setCopied(false), 1500);
     } catch {
       show('Could not copy link', 'error');
     }
@@ -119,7 +122,7 @@ export function ProjectActions({
         aria-pressed={liked}
         aria-label={liked ? 'Unlike' : 'Like'}
         disabled={pending}
-        className="inline-flex items-center gap-2 h-11 px-4 rounded-pill bg-bg border border-border text-[13px] tracking-tight text-text hover:bg-bg-muted transition-colors disabled:opacity-50"
+        className="inline-flex items-center gap-2 h-11 px-4 rounded-pill bg-bg border border-border text-[13px] tracking-tight text-text hover:bg-bg-muted active:scale-95 transition-colors disabled:opacity-50"
       >
         <IGHeartOutline
           filled={liked}
@@ -142,7 +145,11 @@ export function ProjectActions({
         aria-label="Share"
         className="inline-flex items-center justify-center h-11 w-11 rounded-pill bg-bg border border-border text-text hover:bg-bg-muted transition-colors"
       >
-        <IGPaperPlane className="h-5 w-5" />
+        {copied ? (
+          <IGCheck className="h-5 w-5 text-accent" />
+        ) : (
+          <IGPaperPlane className="h-5 w-5" />
+        )}
       </button>
     </div>
   );

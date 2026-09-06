@@ -66,6 +66,23 @@ export function IGPaperPlane({ className = '' }: { className?: string }) {
   );
 }
 
+export function IGCheck({ className = '' }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
 export function IGSaveOutline({ className = '', filled = false }: { className?: string; filled?: boolean }) {
   return (
     <svg

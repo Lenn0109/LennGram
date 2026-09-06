@@ -19,7 +19,10 @@ export function StoryStrip({ projects }: StoryStripProps) {
       className="bg-bg border-b border-border"
       aria-label="Project highlights"
     >
-      <ul className="flex items-start gap-4 sm:gap-5 overflow-x-auto px-4 sm:px-6 py-4 no-scrollbar">
+      <ul
+        className="flex items-start gap-4 sm:gap-5 overflow-x-auto px-4 sm:px-6 py-4 no-scrollbar"
+        style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch' }}
+      >
         {projects.slice(0, 7).map((project) => {
           const initial = project.title.charAt(0).toUpperCase();
           const seen = pickSeen(project.id);

@@ -60,7 +60,7 @@ export function FilterPills({ tags, active }: FilterPillsProps) {
                 className={[
                   'inline-flex h-7 items-center px-3 rounded-pill text-[12px] tracking-tight',
                   'transition-colors duration-fast ease-out',
-                  'active:scale-95',
+                  'hover:scale-[1.02] active:scale-95',
                   isActive
                     ? 'bg-accent text-bg font-semibold shadow-vc'
                     : 'bg-bg text-text shadow-vc hover:shadow-vc-hover',

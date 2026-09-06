@@ -41,7 +41,12 @@ export function BottomNav() {
                 href={item.href}
                 aria-label={item.label}
                 aria-current={active ? 'page' : undefined}
-                className="flex flex-col items-center justify-center h-full gap-0.5 focus-visible:outline-none focus-visible:bg-bg-muted transition-colors"
+                className={[
+                  'flex flex-col items-center justify-center h-full gap-0.5',
+                  'focus-visible:outline-none focus-visible:bg-bg-muted',
+                  'transition-colors',
+                  active ? 'bg-accent/10 rounded-sm' : '',
+                ].join(' ')}
               >
                 <Icon
                   filled={item.supportsFill && active}

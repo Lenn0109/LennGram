@@ -164,7 +164,11 @@ export default async function ProjectPage({ params }: PageProps) {
             </div>
 
             {/* Comments — fixes the broken #comments anchor */}
-            {comments.length > 0 && <Comments comments={comments} />}
+            {comments.length > 0 && (
+              <section id="comments">
+                <Comments comments={comments} />
+              </section>
+            )}
           </article>
         </div>
 

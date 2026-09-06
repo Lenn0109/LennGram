@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { IGHeartOutline, IGComment, IGPaperPlane, IGSaveOutline } from '@/components/ui/IgIcons';
+import { IGHeartOutline, IGComment, IGPaperPlane, IGSaveOutline, IGCheck } from '@/components/ui/IgIcons';
 import { CoverArt } from '@/components/feed/CoverArt';
 import { useToast } from '@/components/ui/Toast';
 import { formatTechName, descriptionSnippet } from '@/lib/mock';
@@ -80,6 +80,7 @@ export function ProjectCard({
   const [saved, setSaved] = useState(false);
   const [pending, setPending] = useState(false);
   const [entered, setEntered] = useState(false);
+  const [copied, setCopied] = useState(false);
   const cardRef = useRef<HTMLElement>(null);
   const lastTapRef = useRef(0);
 
@@ -153,6 +154,7 @@ export function ProjectCard({
     } finally {
       setPending(false);
     }
+    show(next ? 'Liked!' : 'Removed like', 'success');
   }
 
   function handleClick() {
@@ -188,7 +190,9 @@ export function ProjectCard({
     }
     try {
       await navigator.clipboard.writeText(url);
-      show('Link copied', 'success');
+      setCopied(true);
+      show('Copied!', 'success');
+      setTimeout(() => setCopied(false), 1500);
     } catch {
       show('Could not copy link', 'error');
     }
@@ -209,6 +213,7 @@ export function ProjectCard({
         isFirst ? '' : 'border-t border-border',
         'transition-all duration-300 ease-out',
         entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4',
+        'hover:shadow-vc-hover transition-shadow duration-base',
       ].join(' ')}
     >
       <header className="flex items-center gap-2.5 px-4 sm:px-5 pt-3.5 pb-2.5">
@@ -299,10 +304,14 @@ export function ProjectCard({
             <button
               type="button"
               onClick={() => void shareProject()}
-              className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] p-2.5 hover:opacity-60 active:scale-95 transition-transform"
+              className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] p-2.5 hover:opacity-60 active:scale-95 transition-all"
               aria-label="Share"
             >
-              <IGPaperPlane className="h-[22px] w-[22px] text-text" />
+              {copied ? (
+                <IGCheck className="h-[22px] w-[22px] text-accent transition-all" />
+              ) : (
+                <IGPaperPlane className="h-[22px] w-[22px] text-text transition-all" />
+              )}
             </button>
           )}
         </div>

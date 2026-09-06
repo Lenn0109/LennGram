@@ -94,8 +94,10 @@ function ToastItem({ toast }: { toast: Toast }) {
       className={[
         'px-4 h-9 inline-flex items-center text-[13px] tracking-tight',
         'rounded-pill shadow-apple-card pointer-events-auto',
-        'transition-all duration-base ease-apple',
-        entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2',
+        'transition-all duration-slow ease-apple',
+        entered
+          ? 'opacity-100 translate-y-0 scale-100'
+          : 'opacity-0 translate-y-4 scale-95',
         colorClass,
       ].join(' ')}
     >

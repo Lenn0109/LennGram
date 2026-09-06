@@ -1,21 +1,15 @@
 import Link from 'next/link';
 
 const links: Array<{ label: string; href: string; external?: boolean }> = [
-  { label: 'About', href: '/admin' },
-  { label: 'Help', href: '/admin' },
-  { label: 'Press', href: '/admin' },
-  { label: 'API', href: '/admin' },
-  { label: 'Jobs', href: '/admin' },
-  { label: 'Privacy', href: '/admin' },
-  { label: 'Terms', href: '/admin' },
-  { label: 'Locations', href: '/admin' },
+  { label: 'About', href: '/you' },
   { label: 'GitHub', href: 'https://github.com/Lenn0109/LennGram', external: true },
+  { label: 'Source', href: 'https://github.com/Lenn0109/LennGram', external: true },
 ];
 
 export function Footer() {
   return (
     <footer className="hidden sm:block bg-bg-muted border-t border-border">
-      <div className="mx-auto max-w-feed sm:max-w-2xl px-4 sm:px-6 py-10">
+      <div className="mx-auto max-w-[1600px] px-4 sm:px-6 py-10">
         <ul className="flex flex-wrap gap-x-5 gap-y-2 text-[12px] text-text-muted tracking-tight">
           {links.map((l) => (
             <li key={l.label}>

@@ -8,7 +8,7 @@ export function Hero() {
 
   useEffect(() => {
     function onScroll() {
-      setCompact(window.scrollY > 80);
+      setCompact(window.scrollY > 120);
     }
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -20,7 +20,7 @@ export function Hero() {
       className={[
         'bg-bg-muted border-b border-border',
         'transition-all duration-base ease-apple',
-        compact ? 'py-3 sm:py-10' : 'py-8 sm:py-20',
+        compact ? 'py-6 sm:py-10' : 'py-8 sm:py-20',
       ].join(' ')}
     >
       <div className="mx-auto max-w-apple px-4 sm:px-6 text-center">
