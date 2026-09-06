@@ -30,11 +30,11 @@ export function StoryStrip({ projects }: StoryStripProps) {
                 aria-label={`${project.title}${seen ? '' : ' (new)'}`}
                 className="group flex flex-col items-center gap-2 w-[68px] text-text"
               >
-                <span className="relative h-14 w-14 rounded-md overflow-hidden bg-bg-muted flex items-center justify-center text-[20px] font-semibold tracking-tightest text-text-2 border border-border transition-transform duration-base ease-apple group-hover:scale-[1.04]">
+                <span className="relative h-14 w-14 rounded-full overflow-hidden bg-bg-muted flex items-center justify-center text-[20px] font-semibold tracking-tightest text-text-2 ring-2 ring-border transition-transform duration-base ease-apple group-hover:scale-[1.04] group-hover:ring-text-muted">
                   {initial}
                   {!seen && (
                     <span
-                      className="absolute top-1 right-1 h-2 w-2 rounded-full bg-accent border border-bg"
+                      className="absolute top-0.5 right-0.5 h-2.5 w-2.5 rounded-full bg-accent border-2 border-bg"
                       aria-hidden
                     />
                   )}

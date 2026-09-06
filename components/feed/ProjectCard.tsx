@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { IGHeartOutline, IGComment, IGPaperPlane, IGSaveOutline, IGMore } from '@/components/ui/IgIcons';
+import { IGHeartOutline, IGComment, IGPaperPlane, IGSaveOutline } from '@/components/ui/IgIcons';
 import { CoverArt } from '@/components/feed/CoverArt';
 import { useToast } from '@/components/ui/Toast';
 import { formatTechName, descriptionSnippet } from '@/lib/mock';
@@ -198,7 +198,7 @@ export function ProjectCard({
         entered ? 'opacity-100' : 'opacity-0',
       ].join(' ')}
     >
-      <header className="flex items-center justify-between px-4 sm:px-5 pt-3.5 pb-2.5">
+      <header className="flex items-center gap-2.5 px-4 sm:px-5 pt-3.5 pb-2.5">
         <Link
           href={`/p/${project.slug}`}
           className="flex items-center gap-2.5 min-w-0 text-text"
@@ -222,13 +222,6 @@ export function ProjectCard({
             </span>
           </span>
         </Link>
-        <button
-          type="button"
-          className="p-1 -mr-1 text-text-muted hover:text-text"
-          aria-label="More options"
-        >
-          <IGMore className="h-5 w-5" />
-        </button>
       </header>
 
       <button

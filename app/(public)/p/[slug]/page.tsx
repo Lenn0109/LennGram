@@ -147,8 +147,8 @@ export default async function ProjectPage({ params }: PageProps) {
                   day: 'numeric',
                 })}
               </p>
-              {/* Action bar — placed under title, where users look first */}
-              <div className="mt-5">
+              {/* Action bar — pinned to header bottom with hairline divider */}
+              <div className="mt-6 pt-5 border-t border-border">
                 <ProjectActions
                   projectId={project.id}
                   slug={project.slug}

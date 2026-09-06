@@ -21,11 +21,10 @@ function initialOf(handle: string): string {
 export function Comments({ comments }: CommentsProps) {
   return (
     <section id="comments" className="mt-12 pt-10 border-t border-border scroll-mt-24">
-      <header className="mb-5 flex items-center justify-between">
-        <h2 className="font-headline text-[20px] sm:text-[24px] text-text">
+      <header className="mb-5">
+        <h2 className="font-display text-[20px] sm:text-[24px] text-text tracking-tightest">
           {comments.length === 1 ? '1 comment' : `${comments.length} comments`}
         </h2>
-        <p className="text-[12px] text-text-muted tracking-tight">Mock data</p>
       </header>
 
       <ul className="space-y-5">
@@ -72,10 +71,6 @@ export function Comments({ comments }: CommentsProps) {
           );
         })}
       </ul>
-
-      <p className="mt-8 text-[12px] text-text-muted tracking-tight">
-        Comments are mocked for the demo. A real comments table is on the roadmap.
-      </p>
     </section>
   );
 }

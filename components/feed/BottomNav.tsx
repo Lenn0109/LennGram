@@ -12,7 +12,7 @@ export function BottomNav() {
   };
 
   const items = [
-    { href: '/', label: 'Projects', icon: IGHomeOutline, supportsFill: true },
+    { href: '/', label: 'Home', icon: IGHomeOutline, supportsFill: true },
     { href: '/liked', label: 'Liked', icon: IGHeartOutline, supportsFill: true },
     { href: '/saved', label: 'Saved', icon: IGSaveOutline, supportsFill: true },
     { href: '/you', label: 'You', icon: IGProfileIcon, supportsFill: true },

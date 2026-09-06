@@ -112,18 +112,18 @@ export function ProjectActions({
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2.5">
       <button
         type="button"
         onClick={() => void toggleLike()}
         aria-pressed={liked}
         aria-label={liked ? 'Unlike' : 'Like'}
         disabled={pending}
-        className="inline-flex items-center gap-2 h-9 px-4 rounded-pill bg-bg border border-border text-[13px] tracking-tight text-text hover:bg-bg-muted transition-colors disabled:opacity-50"
+        className="inline-flex items-center gap-2 h-11 px-4 rounded-pill bg-bg border border-border text-[13px] tracking-tight text-text hover:bg-bg-muted transition-colors disabled:opacity-50"
       >
         <IGHeartOutline
           filled={liked}
-          className={['h-[18px] w-[18px]', liked ? 'text-accent' : 'text-text'].join(' ')}
+          className={['h-5 w-5', liked ? 'text-accent' : 'text-text'].join(' ')}
         />
         <span className="tabular-nums">{count.toLocaleString()}</span>
       </button>
@@ -132,17 +132,17 @@ export function ProjectActions({
         onClick={toggleSaved}
         aria-pressed={saved}
         aria-label={saved ? 'Unsave' : 'Save'}
-        className="inline-flex items-center justify-center h-9 w-9 rounded-pill bg-bg border border-border text-text hover:bg-bg-muted transition-colors"
+        className="inline-flex items-center justify-center h-11 w-11 rounded-pill bg-bg border border-border text-text hover:bg-bg-muted transition-colors"
       >
-        <IGSaveOutline filled={saved} className="h-[18px] w-[18px]" />
+        <IGSaveOutline filled={saved} className="h-5 w-5" />
       </button>
       <button
         type="button"
         onClick={() => void shareProject()}
         aria-label="Share"
-        className="inline-flex items-center justify-center h-9 w-9 rounded-pill bg-bg border border-border text-text hover:bg-bg-muted transition-colors"
+        className="inline-flex items-center justify-center h-11 w-11 rounded-pill bg-bg border border-border text-text hover:bg-bg-muted transition-colors"
       >
-        <IGPaperPlane className="h-[18px] w-[18px]" />
+        <IGPaperPlane className="h-5 w-5" />
       </button>
     </div>
   );

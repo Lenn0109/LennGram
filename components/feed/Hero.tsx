@@ -20,7 +20,7 @@ export function Hero() {
       className={[
         'bg-bg-muted border-b border-border',
         'transition-all duration-base ease-apple',
-        compact ? 'py-3 sm:py-10' : 'py-10 sm:py-24',
+        compact ? 'py-3 sm:py-10' : 'py-8 sm:py-20',
       ].join(' ')}
     >
       <div className="mx-auto max-w-apple px-4 sm:px-6 text-center">
@@ -39,7 +39,7 @@ export function Hero() {
             'transition-all duration-base ease-apple',
             compact
               ? 'text-[20px] sm:text-[32px]'
-              : 'text-[32px] sm:text-[56px]',
+              : 'text-[28px] sm:text-[48px]',
           ].join(' ')}
         >
           LennGram.
